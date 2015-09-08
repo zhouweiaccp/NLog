@@ -901,6 +901,16 @@ namespace NLog.UnitTests
                 logger.Fatal(CultureInfo.InvariantCulture, "message{0}", (decimal)2.5);
                 if (enabled == 1) AssertDebugLastMessage("debug", "message2.5");
 
+                var testParam = "test_param";
+                logger.Fatal(CultureInfo.InvariantCulture, $"message{testParam}");
+                if (enabled == 1) AssertDebugLastMessage("debug", "message" + testParam);
+
+                logger.Fatal($"message{testParam}");
+                if (enabled == 1) AssertDebugLastMessage("debug", "message" + testParam);
+
+                logger.Fatal(new Exception("testex"), $"message{testParam}");
+                if (enabled == 1) AssertDebugLastMessage("debug", "message" + testParam);
+
 #pragma warning disable 0618
                 // Obsolete method requires testing until removed.
                 logger.FatalException("message", new Exception("test"));
