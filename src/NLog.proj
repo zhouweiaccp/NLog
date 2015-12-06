@@ -35,7 +35,7 @@
     <BuildAllFrameworks Condition="'$(BuildNetFX40)' == 'true'">false</BuildAllFrameworks>
     <BuildAllFrameworks Condition="'$(BuildNetFX45)' == 'true'">false</BuildAllFrameworks>
     <BuildAllFrameworks Condition="'$(BuildWP8)' == 'true'">false</BuildAllFrameworks>
-    <BuildAllFrameworks Condition="'$(BuilUWP10)' == 'true'">false</BuildAllFrameworks>
+    <BuildAllFrameworks Condition="'$(BuildUWP10)' == 'true'">false</BuildAllFrameworks>
     <BuildAllFrameworks Condition="'$(BuildXamarinAndroid)' == 'true'">false</BuildAllFrameworks>
     <BuildAllFrameworks Condition="'$(BuildXamarinIOS)' == 'true'">false</BuildAllFrameworks>
     <IgnoreBuildFailures>false</IgnoreBuildFailures>
@@ -110,7 +110,8 @@
     <BuildSL5 Condition="'$(MSBuildToolsVersion)'=='3.5'">false</BuildSL5>
     <BuildNetFX40 Condition="'$(MSBuildToolsVersion)'=='3.5'">false</BuildNetFX40>
     <BuildNetFX45 Condition="'$(MSBuildToolsVersion)'=='3.5'">false</BuildNetFX45>
-  
+    <!--we need MSbuild 14 for UWP (=VS2015)-->
+    <BuildUWP10 Condition="'$(MSBuildToolsVersion)'&lt;'14'">false</BuildUWP10>
 </PropertyGroup>
 
   <ItemGroup>
@@ -251,7 +252,7 @@
     <CallTarget Targets="NetFx35Test" Condition="'$(BuildNetFX35)'=='true'"/>
     <CallTarget Targets="NetFx40Test" Condition="'$(BuildNetFX40)'=='true'"/>
     <CallTarget Targets="NetFx45Test" Condition="'$(BuildNetFX45)'=='true'"/>
-    <CallTarget Targets="NetUWP10Test" Condition="'$(BuildUWP10)'=='true'"/>
+    <CallTarget Targets="UWP10Test" Condition="'$(BuildUWP10)'=='true'"/>
     <CallTarget Targets="SL4Test" Condition="'$(BuildSL4)'=='true'"/>
     <CallTarget Targets="SL5Test" Condition="'$(BuildSL5)'=='true'"/>
     <Exec Command="$(BaseOutputDirectory)\bin\DeleteTestUsers.cmd" IgnoreExitCode="true" />
