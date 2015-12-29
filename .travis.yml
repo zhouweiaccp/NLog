@@ -1,5 +1,8 @@
 language: csharp
 solution: src/NLog.mono.sln
+mono:
+  - weekly #need mono 4.2+
+  - 2.10.8
 install:
   - nuget restore src/NLog.mono.sln
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
