@@ -146,6 +146,7 @@
     <Compile Include="Filters\WhenNotContainsTests.cs" />
     <Compile Include="Filters\WhenNotEqualTests.cs" />
     <Compile Include="Fluent\LogBuilderTests.cs" />
+    <Compile Include="GetLoggerExtTest.cs" />
     <Compile Include="GetLoggerTests.cs" />
     <Compile Include="Internal\EnumHelpersTests.cs" />
     <Compile Include="Internal\ExceptionHelperTests.cs" />

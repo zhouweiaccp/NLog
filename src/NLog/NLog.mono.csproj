@@ -135,6 +135,7 @@
     <Compile Include="Fluent\LogBuilder.cs" />
     <Compile Include="Fluent\LoggerExtensions.cs" />
     <Compile Include="GDC.cs" />
+    <Compile Include="GetLoggerExt.cs" />
     <Compile Include="GlobalDiagnosticsContext.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ILogger.cs" />
