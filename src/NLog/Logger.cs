@@ -391,6 +391,15 @@ namespace NLog
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, formatProvider, message, args)), this.Factory);
         }
 
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, Exception ex, [Localizable(false)] string message, object[] args)
+        {
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, this.Factory.DefaultCultureInfo, message, args)), this.Factory);
+        }
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, Exception ex, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
+        {
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, formatProvider, message, args)), this.Factory);
+        }
 
         private LogEventInfo PrepareLogEventInfo(LogEventInfo logEvent)
         {
@@ -398,6 +407,17 @@ namespace NLog
             {
                 logEvent.FormatProvider = this.Factory.DefaultCultureInfo;
             }
+            return logEvent;
+
+        }
+
+
+        private LogEventInfo PrepareLogEventInfo(string memberName, string sourceFilePath, int sourceLineNumber, LogEventInfo logEvent)
+        {
+            PrepareLogEventInfo(logEvent);
+            logEvent.Properties["memberName"] = memberName;
+            logEvent.Properties["sourceFilePath"] = sourceFilePath;
+            logEvent.Properties["sourceLineNumber"] = sourceLineNumber;
             return logEvent;
 
         }
@@ -592,6 +612,50 @@ namespace NLog
         internal void WriteToTargets(Type wrapperType, LogEventInfo logEvent)
         {
             LoggerImpl.Write(wrapperType ?? this.loggerType, this.GetTargetsForLevel(logEvent.Level), PrepareLogEventInfo(logEvent), this.Factory);
+        }
+
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
+        {
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(memberName, sourceFilePath, sourceLineNumber, LogEventInfo.Create(level, this.Name, formatProvider, message, args)), this.Factory);
+        }
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message)
+        {
+            // please note that this overload calls the overload of LogEventInfo.Create with object[] parameter on purpose -
+            // to avoid unnecessary string.Format (in case of calling Create(LogLevel, string, IFormatProvider, object))
+            var logEvent = LogEventInfo.Create(level, this.Name, formatProvider, message, (object[])null);
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(memberName, sourceFilePath, sourceLineNumber, logEvent), this.Factory);
+        }
+
+        internal void WriteToTargets<T>(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, IFormatProvider formatProvider, T value)
+        {
+            var logEvent = PrepareLogEventInfo(memberName, sourceFilePath, sourceLineNumber, LogEventInfo.Create(level, this.Name, formatProvider, value));
+            var ex = value as Exception;
+            if (ex != null)
+            {
+                //also record exception
+                logEvent.Exception = ex;
+
+            }
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), logEvent, this.Factory);
+        }
+
+
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogLevel level, [Localizable(false)] string message, object[] args)
+        {
+            this.WriteToTargets(memberName, sourceFilePath, sourceLineNumber, level, this.Factory.DefaultCultureInfo, message, args);
+        }
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, LogEventInfo logEvent)
+        {
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(logEvent.Level), PrepareLogEventInfo(memberName, sourceFilePath, sourceLineNumber, logEvent), this.Factory);
+        }
+
+        internal void WriteToTargets(string memberName, string sourceFilePath, int sourceLineNumber, Type wrapperType, LogEventInfo logEvent)
+        {
+            LoggerImpl.Write(wrapperType ?? this.loggerType, this.GetTargetsForLevel(logEvent.Level), PrepareLogEventInfo(memberName, sourceFilePath, sourceLineNumber, logEvent), this.Factory);
         }
 
         internal void SetConfiguration(LoggerConfiguration newConfiguration)

@@ -138,6 +138,7 @@
     <Compile Include="GlobalDiagnosticsContext.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="ILogger2.cs" />
     <Compile Include="ILoggerBase.cs" />
     <Compile Include="ILoggerBase-V1.cs" />
     <Compile Include="ILogger-V1.cs" />
@@ -306,6 +307,11 @@
     <Compile Include="LogEventInfo.cs" />
     <Compile Include="LogFactory.cs" />
     <Compile Include="LogFactory-T.cs" />
+    <Compile Include="Logger2.cs">
+      <DependentUpon>Logger2.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Logger.cs" />
     <Compile Include="Logger1.cs">
       <AutoGen>True</AutoGen>
@@ -435,6 +441,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Logger2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Logger2.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(StyleCopTargetsFile)" Condition="Exists('$(StyleCopTargetsFile)')" />

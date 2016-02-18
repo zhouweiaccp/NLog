@@ -202,6 +202,7 @@
     <Compile Include="Layouts\SimpleLayoutParserTests.cs" />
     <Compile Include="Layouts\ThreadAgnosticTests.cs" />
     <Compile Include="LogFactoryTests.cs" />
+    <Compile Include="Logger2test.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="LogLevelTests.cs" />
     <Compile Include="LogManagerTests.cs" />
