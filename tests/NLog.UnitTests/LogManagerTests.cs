@@ -385,11 +385,7 @@ namespace NLog.UnitTests
         public void GivenCurrentClass_WhenGetCurrentClassLogger_ThenLoggerShouldBeCurrentClass()
         {
             var logger = LogManager.GetCurrentClassLogger();
-#if UWP10
-            Assert.Equal(this.GetType().Name, logger.Name);
-#else
             Assert.Equal(this.GetType().FullName, logger.Name);
-#endif
         }
 
         private static class ImAStaticClass
@@ -467,7 +463,7 @@ namespace NLog.UnitTests
         }
 
 
-#if NET4_0 || NET4_5 && !NETSTANDARD_1plus
+#if NET4_0 || NET4_5 || NETSTANDARD_1plus
         [Fact]
         public void GivenLazyClass_WhenGetCurrentClassLogger_ThenLoggerNameShouldBeCurrentClass()
         {

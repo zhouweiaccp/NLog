@@ -64,27 +64,20 @@ namespace NLog
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Backwards compatibility")]
         [MethodImpl(MethodImplOptions.NoInlining)]
 
-#if UWP10
-        public new T GetCurrentClassLogger([CallerFilePath] string path = "")
-#else
         public new T GetCurrentClassLogger()
-#endif
         {
 
-#if !UWP10
-#if SILVERLIGHT
-            StackFrame frame = new StackFrame(1);
+#if UWP10
+            var frame = (StackFrame)System.Activator.CreateInstance(typeof(StackFrame), 1, false);
+#elif SILVERLIGHT
+            var frame = new StackFrame(1);
 #else
-            StackFrame frame = new StackFrame(1, false);
+            var frame = new StackFrame(1, false);
 #endif
 
             return this.GetLogger(frame.GetMethod().DeclaringType.FullName);
-#else
 
-            var name = Path.GetFileNameWithoutExtension(path);
 
-            return this.GetLogger(name);
-#endif
         }
     }
 }

@@ -394,29 +394,20 @@ namespace NLog
         /// <remarks>This is a slow-running method. 
         /// Make sure you're not doing this in a loop.</remarks>
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if UWP10
-        public Logger GetCurrentClassLogger([CallerFilePath] string path = "")
-#else
         public Logger GetCurrentClassLogger()
-#endif
         {
-#if !UWP10
-#if SILVERLIGHT
+#if UWP10
+            var frame = (StackFrame)Activator.CreateInstance(typeof(StackFrame), 1, false); 
+#elif SILVERLIGHT
             var frame = new StackFrame(1);
 #else
             var frame = new StackFrame(1, false);
 #endif
             return this.GetLogger(frame.GetMethod().DeclaringType.FullName);
-#else
-
-            var filename = Path.GetFileNameWithoutExtension(path);
-
-            return this.GetLogger(filename);
-#endif
 
         }
 
-#if !UWP10
+
         /// <summary>
         /// Gets a custom logger with the name of the current class. Use <typeparamref name="T"/> to pass the type of the needed Logger.
         /// </summary>
@@ -427,7 +418,9 @@ namespace NLog
         [MethodImpl(MethodImplOptions.NoInlining)]
         public T GetCurrentClassLogger<T>() where T : Logger
         {
-#if SILVERLIGHT
+#if UWP10
+            var frame = (StackFrame)Activator.CreateInstance(typeof(StackFrame), 1, false); 
+#elif SILVERLIGHT
             var frame = new StackFrame(1);
 #else
             var frame = new StackFrame(1, false);
@@ -448,15 +441,17 @@ namespace NLog
         public Logger GetCurrentClassLogger(Type loggerType)
         {
 
-#if !SILVERLIGHT
-            var frame = new StackFrame(1, false);
-#else
+#if UWP10
+            var frame = (StackFrame)Activator.CreateInstance(typeof(StackFrame), 1, false); 
+#elif SILVERLIGHT
             var frame = new StackFrame(1);
+#else
+            var frame = new StackFrame(1, false);
 #endif
 
             return this.GetLogger(frame.GetMethod().DeclaringType.FullName, loggerType);
         }
-#endif
+
         /// <summary>
         /// Gets the specified named logger.
         /// </summary>
