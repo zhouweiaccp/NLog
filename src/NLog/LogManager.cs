@@ -425,7 +425,10 @@ namespace NLog
             {
 
 #if UWP10
+                framesToSkip = 6;
                 StackFrame frame = (StackFrame)Activator.CreateInstance(typeof(StackFrame), framesToSkip, false); 
+                StackFrame frame2 = (StackFrame)Activator.CreateInstance(typeof(StackFrame), framesToSkip+1, false); 
+                var trace = (StackTrace)Activator.CreateInstance(typeof(StackTrace), 1, false); 
 #elif SILVERLIGHT
                 StackFrame frame = new StackTrace().GetFrame(framesToSkip);
 #else
