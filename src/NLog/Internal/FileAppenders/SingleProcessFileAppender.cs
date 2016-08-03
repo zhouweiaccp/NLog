@@ -49,25 +49,24 @@ namespace NLog.Internal.FileAppenders
         private FileStream file;
 
         /// <summary>
+        /// 
         /// Initializes a new instance of the <see cref="SingleProcessFileAppender" /> class.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="parameters">The parameters.</param>
         public SingleProcessFileAppender(string fileName, ICreateFileParameters parameters) : base(fileName, parameters)
         {
-            var fileInfo = new FileInfo(fileName);
-            if (fileInfo.Exists)
-            {
-#if !SILVERLIGHT
-                FileTouched(fileInfo.LastWriteTimeUtc);
-#else
-                FileTouched(fileInfo.LastWriteTime);
-#endif
-            }
-            else
-            {
-                FileTouched();
-            }
+//            var fileInfo = new FileInfo(fileName);
+//            if (fileInfo.Exists)
+//            {
+//#if !SILVERLIGHT
+//#else
+//                FileTouched(fileInfo.LastWriteTime);
+//#endif
+//            }
+            //else
+            //{
+            //}
             this.file = CreateFileStream(false);
         }
 
@@ -77,13 +76,12 @@ namespace NLog.Internal.FileAppenders
         /// <param name="bytes">The bytes.</param>
         public override void Write(byte[] bytes)
         {
-            if (this.file == null)
-            {
-                return;
-            }
+            //if (this.file == null)
+            //{
+            //    return;
+            //}
 
             this.file.Write(bytes, 0, bytes.Length);
-            FileTouched();
         }
 
         /// <summary>
@@ -97,7 +95,6 @@ namespace NLog.Internal.FileAppenders
             }
 
             this.file.Flush();
-            FileTouched();
         }
 
         /// <summary>
@@ -121,7 +118,7 @@ namespace NLog.Internal.FileAppenders
         /// <returns>The file characteristics, if the file information was retrieved successfully, otherwise null.</returns>
         public override FileCharacteristics GetFileCharacteristics()
         {
-            return file == null ? null : new FileCharacteristics(CreationTime, LastWriteTime, file.Length);
+            return file == null ? null : new FileCharacteristics(CreationTime, file.Length);
         }
 
         /// <summary>

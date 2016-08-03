@@ -138,23 +138,6 @@ namespace NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Updates the last write time of the file.
-        /// </summary>
-        protected void FileTouched()
-        {
-            FileTouched(DateTime.UtcNow);
-        }
-
-        /// <summary>
-        /// Updates the last write time of the file to the specified date.
-        /// </summary>
-        /// <param name="dateTime">Date and time when the last write occurred in UTC.</param>
-        protected void FileTouched(DateTime dateTime)
-        {
-            this.LastWriteTime = dateTime;
-        }
-        
-        /// <summary>
         /// Creates the file stream.
         /// </summary>
         /// <param name="allowFileSharedWriting">If set to <c>true</c> sets the file stream to allow shared writing.</param>

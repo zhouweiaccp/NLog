@@ -759,7 +759,7 @@ namespace NLog.Targets
         /// <param name="logEvent">The logging event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            var fileName = Path.GetFullPath(GetCleanedFileName(logEvent));
+            var fileName = (GetCleanedFileName(logEvent));
 
             byte[] bytes = this.GetBytesToWrite(logEvent);
 
@@ -815,7 +815,7 @@ namespace NLog.Targets
 
                 foreach (var bucket in buckets)
                 {
-                    string fileName = Path.GetFullPath(CleanupInvalidFileNameChars(bucket.Key));
+                    string fileName = (CleanupInvalidFileNameChars(bucket.Key));
 
                     ms.SetLength(0);
                     ms.Position = 0;
@@ -999,7 +999,7 @@ namespace NLog.Targets
             int trailerLength = fileTemplate.Template.Length - fileTemplate.EndAt;
             string fileNameMask = fileTemplate.ReplacePattern("*");
 
-            string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
+            string dirName = Path.GetDirectoryName((pattern));
             int nextNumber = -1;
             int minNumber = -1;
 
@@ -1144,7 +1144,7 @@ namespace NLog.Targets
             string fileNameMask = fileTemplate.ReplacePattern("*");
             string dateFormat = GetArchiveDateFormatString(this.ArchiveDateFormat);
 
-            string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
+            string dirName = Path.GetDirectoryName((pattern));
             if (string.IsNullOrEmpty(dirName))
             {
                 return;
@@ -1320,7 +1320,7 @@ namespace NLog.Targets
         private void ArchiveByDate(string fileName, string pattern, LogEventInfo logEvent)
         {
             string fileNameMask = ReplaceFileNamePattern(pattern, "*");
-            string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
+            string dirName = Path.GetDirectoryName((pattern));
             string dateFormat = GetArchiveDateFormatString(this.ArchiveDateFormat);
 
             DateTime archiveDate = GetArchiveDate(fileName, logEvent);
@@ -1342,7 +1342,7 @@ namespace NLog.Targets
         {
 
             string fileNameMask = ReplaceFileNamePattern(pattern, "*");
-            string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
+            string dirName = Path.GetDirectoryName((pattern));
             string dateFormat = GetArchiveDateFormatString(this.ArchiveDateFormat);
 
             if (dirName != null)
@@ -1407,40 +1407,41 @@ namespace NLog.Targets
 
         private DateTime GetArchiveDate(string fileName, LogEventInfo logEvent)
         {
-            var fileCharacteristics = GetFileCharacteristics(fileName);
-            var lastWriteTime = TimeSource.Current.FromSystemTime(fileCharacteristics.LastWriteTimeUtc);
+            throw new NotImplementedException();
+            //var fileCharacteristics = GetFileCharacteristics(fileName);
+            //var lastWriteTime = TimeSource.Current.FromSystemTime(fileCharacteristics.LastWriteTimeUtc);
 
-            bool previousLogIsMoreRecent = (previousLogEventTimestamp.HasValue) && (previousLogEventTimestamp.Value > lastWriteTime);
-            return (previousLogIsMoreRecent) || (PreviousLogOverlappedPeriod(fileCharacteristics, logEvent))
-                ? previousLogEventTimestamp.Value
-                : lastWriteTime;
+            //bool previousLogIsMoreRecent = (previousLogEventTimestamp.HasValue) && (previousLogEventTimestamp.Value > lastWriteTime);
+            //return (previousLogIsMoreRecent) || (PreviousLogOverlappedPeriod(fileCharacteristics, logEvent))
+            //    ? previousLogEventTimestamp.Value
+            //    : lastWriteTime;
         }
 
         private bool PreviousLogOverlappedPeriod(FileCharacteristics fileCharacteristics, LogEventInfo logEvent)
         {
-            if (!previousLogEventTimestamp.HasValue)
+           // if (!previousLogEventTimestamp.HasValue)
                 return false;
 
-            string formatString = GetArchiveDateFormatString(string.Empty);
-            string lastWriteTimeString = TimeSource.Current.FromSystemTime(fileCharacteristics.LastWriteTimeUtc).ToString(formatString, CultureInfo.InvariantCulture);
-            string logEventTimeString = logEvent.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
+            //string formatString = GetArchiveDateFormatString(string.Empty);
+            //string lastWriteTimeString = TimeSource.Current.FromSystemTime(fileCharacteristics.LastWriteTimeUtc).ToString(formatString, CultureInfo.InvariantCulture);
+            //string logEventTimeString = logEvent.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
 
-            if (lastWriteTimeString != logEventTimeString)
-                return false;
+            //if (lastWriteTimeString != logEventTimeString)
+            //    return false;
 
-            DateTime periodAfterPreviousLogEventTime;
-            switch (this.ArchiveEvery)
-            {
-                case FileArchivePeriod.Year: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddYears(1); break;
-                case FileArchivePeriod.Month: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddMonths(1); break;
-                case FileArchivePeriod.Day: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddDays(1); break;
-                case FileArchivePeriod.Hour: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddHours(1); break;
-                case FileArchivePeriod.Minute: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddMinutes(1); break;
-                default: return false;
-            }
+            //DateTime periodAfterPreviousLogEventTime;
+            //switch (this.ArchiveEvery)
+            //{
+            //    case FileArchivePeriod.Year: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddYears(1); break;
+            //    case FileArchivePeriod.Month: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddMonths(1); break;
+            //    case FileArchivePeriod.Day: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddDays(1); break;
+            //    case FileArchivePeriod.Hour: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddHours(1); break;
+            //    case FileArchivePeriod.Minute: periodAfterPreviousLogEventTime = previousLogEventTimestamp.Value.AddMinutes(1); break;
+            //    default: return false;
+            //}
 
-            string periodAfterPreviousLogEventTimeString = periodAfterPreviousLogEventTime.ToString(formatString, CultureInfo.InvariantCulture);
-            return lastWriteTimeString == periodAfterPreviousLogEventTimeString;
+            //string periodAfterPreviousLogEventTimeString = periodAfterPreviousLogEventTime.ToString(formatString, CultureInfo.InvariantCulture);
+            //return lastWriteTimeString == periodAfterPreviousLogEventTimeString;
         }
 
         /// <summary>
@@ -1513,7 +1514,7 @@ namespace NLog.Targets
                 //(2) User supplied the normal filename
                 string archiveFileName = this.ArchiveFileName.Render(eventInfo);
                 archiveFileName = CleanupInvalidFileNameChars(archiveFileName);
-                return Path.GetFullPath(archiveFileName);
+                return (archiveFileName);
             }
         }
 
@@ -1543,18 +1544,20 @@ namespace NLog.Targets
                 return false;
             }
 
-            var fileCharacteristics = this.GetFileCharacteristics(fileName);
-            if (fileCharacteristics == null)
-            {
-                return false;
-            }
+           
 
             if (this.ArchiveAboveSize != FileTarget.ArchiveAboveSizeDisabled)
             {
-                if (fileCharacteristics.FileLength + upcomingWriteSize > this.ArchiveAboveSize)
-                {
-                    return true;
-                }
+                //var fileCharacteristics = this.GetFileCharacteristics(fileName);
+                //if (fileCharacteristics == null)
+                //{
+                //    return false;
+                //}
+
+                //if (fileCharacteristics.FileLength + upcomingWriteSize > this.ArchiveAboveSize)
+                //{
+                //    return true;
+                //}
             }
 
             return false;
@@ -1573,23 +1576,25 @@ namespace NLog.Targets
                 return false;
             }
 
-            var fileCharacteristics = this.GetFileCharacteristics(fileName);
-            if (fileCharacteristics == null)
-            {
-                return false;
-            }
+           
 
-            if (this.ArchiveEvery != FileArchivePeriod.None)
-            {
-                // file creation time is in Utc and logEvent's timestamp is originated from TimeSource.Current,
-                // so we should ask the TimeSource to convert file time to TimeSource time:
-                DateTime creationTime = TimeSource.Current.FromSystemTime(fileCharacteristics.CreationTimeUtc);
-                string formatString = GetArchiveDateFormatString(string.Empty);
-                string fileCreated = creationTime.ToString(formatString, CultureInfo.InvariantCulture);
-                string logEventRecorded = logEvent.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
+            //if (this.ArchiveEvery != FileArchivePeriod.None)
+            //{
+            //    var fileCharacteristics = this.GetFileCharacteristics(fileName);
+            //    if (fileCharacteristics == null)
+            //    {
+            //        return false;
+            //    }
 
-                return fileCreated != logEventRecorded;
-            }
+            //    // file creation time is in Utc and logEvent's timestamp is originated from TimeSource.Current,
+            //    // so we should ask the TimeSource to convert file time to TimeSource time:
+            //    DateTime creationTime = TimeSource.Current.FromSystemTime(fileCharacteristics.CreationTimeUtc);
+            //    string formatString = GetArchiveDateFormatString(string.Empty);
+            //    string fileCreated = creationTime.ToString(formatString, CultureInfo.InvariantCulture);
+            //    string logEventRecorded = logEvent.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
+
+            //    return fileCreated != logEventRecorded;
+            //}
 
             return false;
         }
@@ -1654,13 +1659,13 @@ namespace NLog.Targets
                 return;
             }
 
-            bool writeHeader = InitializeFile(fileName, logEvent, justData);
+         //   bool writeHeader = InitializeFile(fileName, logEvent, justData);
             BaseFileAppender appender = this.recentAppenders.AllocateAppender(fileName);
 
-            if (writeHeader)
-            {
-                this.WriteHeader(appender);
-            }
+            //if (writeHeader)
+            //{
+            //    this.WriteHeader(appender);
+            //}
 
             appender.Write(bytes);
 
@@ -1805,48 +1810,48 @@ namespace NLog.Targets
             }
         }
 
-        /// <summary>
-        /// Writes the header information to a file.
-        /// </summary>
-        /// <param name="appender">File appender associated with the file.</param>
-        private void WriteHeader(BaseFileAppender appender)
-        {
-            FileCharacteristics fileCharacteristics = appender.GetFileCharacteristics();
-            //  Write header only on empty files or if file info cannot be obtained.
-            if ((fileCharacteristics == null) || (fileCharacteristics.FileLength == 0))
-            {
-                byte[] headerBytes = this.GetHeaderBytes();
-                if (headerBytes != null)
-                {
-                    appender.Write(headerBytes);
-                }
-            }
-        }
+        ///// <summary>
+        ///// Writes the header information to a file.
+        ///// </summary>
+        ///// <param name="appender">File appender associated with the file.</param>
+        //private void WriteHeader(BaseFileAppender appender)
+        //{
+        //    FileCharacteristics fileCharacteristics = appender.GetFileCharacteristics();
+        //    //  Write header only on empty files or if file info cannot be obtained.
+        //    if ((fileCharacteristics == null) || (fileCharacteristics.FileLength == 0))
+        //    {
+        //        byte[] headerBytes = this.GetHeaderBytes();
+        //        if (headerBytes != null)
+        //        {
+        //            appender.Write(headerBytes);
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Returns the length of a specified file and the last time it has been written. File appender is queried before the file system.  
-        /// </summary>
-        /// <param name="filePath">File which the information are requested.</param>
-        /// <returns>The file characteristics, if the file information was retrieved successfully, otherwise null.</returns>
-        private FileCharacteristics GetFileCharacteristics(string filePath)
-        {
-            var fileCharacteristics = this.recentAppenders.GetFileCharacteristics(filePath);
-            if (fileCharacteristics != null)
-                return fileCharacteristics;
+//        /// <summary>
+//        /// Returns the length of a specified file and the last time it has been written. File appender is queried before the file system.  
+//        /// </summary>
+//        /// <param name="filePath">File which the information are requested.</param>
+//        /// <returns>The file characteristics, if the file information was retrieved successfully, otherwise null.</returns>
+//        private FileCharacteristics GetFileCharacteristics(string filePath)
+//        {
+//            var fileCharacteristics = this.recentAppenders.GetFileCharacteristics(filePath);
+//            if (fileCharacteristics != null)
+//                return fileCharacteristics;
 
-            var fileInfo = new FileInfo(filePath);
-            if (fileInfo.Exists)
-            {
-#if !SILVERLIGHT
-                fileCharacteristics = new FileCharacteristics(fileInfo.CreationTimeUtc, fileInfo.LastWriteTimeUtc, fileInfo.Length);
-#else
-                fileCharacteristics = new FileCharacteristics(fileInfo.CreationTime, fileInfo.LastWriteTime, fileInfo.Length);
-#endif
-                return fileCharacteristics;
-            }
+//            var fileInfo = new FileInfo(filePath);
+//            if (fileInfo.Exists)
+//            {
+//#if !SILVERLIGHT
+//                fileCharacteristics = new FileCharacteristics(fileInfo.CreationTimeUtc, fileInfo.Length);
+//#else
+//                fileCharacteristics = new FileCharacteristics(fileInfo.CreationTime, fileInfo.LastWriteTime, fileInfo.Length);
+//#endif
+//                return fileCharacteristics;
+//            }
 
-            return null;
-        }
+//            return null;
+//        }
 
         /// <summary>
         /// The sequence of <see langword="byte"/> to be written in a file after applying any formating and any

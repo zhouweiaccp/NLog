@@ -235,24 +235,24 @@ namespace NLog.Internal.FileAppenders
             }
         }
 
-        /// <summary>
-        /// Gets the file info for a particular appender.
-        /// </summary>
-        /// <param name="fileName">The file name associated with a particular appender.</param>
-        /// <returns>The file characteristics, if the file information was retrieved successfully, otherwise null.</returns>
-        public FileCharacteristics GetFileCharacteristics(string fileName)
-        {
-            foreach (BaseFileAppender appender in appenders)
-            {
-                if (appender == null)
-                    break;
+        ///// <summary>
+        ///// Gets the file info for a particular appender.
+        ///// </summary>
+        ///// <param name="fileName">The file name associated with a particular appender.</param>
+        ///// <returns>The file characteristics, if the file information was retrieved successfully, otherwise null.</returns>
+        //public FileCharacteristics GetFileCharacteristics(string fileName)
+        //{
+        //    foreach (BaseFileAppender appender in appenders)
+        //    {
+        //        if (appender == null)
+        //            break;
 
-                if (appender.FileName == fileName)
-                    return appender.GetFileCharacteristics();
-            }
+        //        if (appender.FileName == fileName)
+        //            return appender.GetFileCharacteristics();
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         /// <summary>
         /// Closes the specified appender and removes it from the list. 
