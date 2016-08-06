@@ -757,7 +757,14 @@ namespace NLog.Config
             variableElement.AssertName("variable");
 
             string name = variableElement.GetRequiredAttribute("name");
-            string value = this.ExpandSimpleVariables(variableElement.GetRequiredAttribute("value"));
+            string value = this.ExpandSimpleVariables(variableElement.GetOptionalAttribute("value",null));
+
+            if (value == null)
+            {
+                //try inner.
+                value = variableElement.Value;
+            }
+           
 
             this.Variables[name] = value;
         }

@@ -93,6 +93,63 @@ namespace NLog.UnitTests.LayoutRenderers
             Assert.Equal("msg and logger=A=123", lastMessage);
         }
 
+
+        [Fact]
+        public void Var_with_innerValue()
+        {
+            LogManager.Configuration = CreateConfigurationFromString(@"
+<nlog throwExceptions='true'>
+    <variable name='variable1'>this is a variable</variable>
+            
+                <targets>
+                    <target name='debug' type='Debug' layout= '${message} and ${variable1} / ${var:variable1}' /></targets>
+                <rules>
+                    <logger name='*' minlevel='Debug' writeTo='debug' />
+                </rules>
+            </nlog>");
+
+            ILogger logger = LogManager.GetLogger("A");
+
+            logger.Debug("msg");
+            var lastMessage = GetDebugLastMessage("debug");
+            Assert.Equal("msg and this is a variable / this is a variable", lastMessage);
+        }
+
+        [Fact]
+        public void Var_with_CDATA_innerValue()
+        {
+            LogManager.Configuration = CreateConfigurationFromString(@"
+<nlog throwExceptions='true'>
+    <variable name='variable1'><![CDATA[ 
+
+<3 smilies
+and newlines
+]]>
+
+</variable>
+            
+                <targets>
+                    <target name='debug' type='Debug' layout= '${message}: ${variable1} / ${var:variable1}' /></targets>
+                <rules>
+                    <logger name='*' minlevel='Debug' writeTo='debug' />
+                </rules>
+            </nlog>");
+
+            ILogger logger = LogManager.GetLogger("A");
+
+            logger.Debug("msg");
+            var lastMessage = GetDebugLastMessage("debug");
+            Assert.Equal(@"msg:  
+
+<3 smilies
+and newlines
+ /  
+
+<3 smilies
+and newlines
+", lastMessage);
+        }
+
         [Fact]
         public void Var_in_file_target()
         {
