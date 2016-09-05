@@ -509,16 +509,19 @@ namespace NLog.Targets
                 return;
             }
 
-            foreach (var item in logEvent.Parameters)
+            if (logEvent.CouldContainNestedLogEventInfo)
             {
-                var logEventParameter = item as LogEventInfo;
-                if (logEventParameter != null)
+                foreach (var item in logEvent.Parameters)
                 {
-                    foreach (var key in logEventParameter.Properties.Keys)
+                    var logEventParameter = item as LogEventInfo;
+                    if (logEventParameter != null)
                     {
-                        logEvent.Properties.Add(key, logEventParameter.Properties[key]);
+                        foreach (var key in logEventParameter.Properties.Keys)
+                        {
+                            logEvent.Properties.Add(key, logEventParameter.Properties[key]);
+                        }
+                        logEventParameter.Properties.Clear();
                     }
-                    logEventParameter.Properties.Clear();
                 }
             }
         }

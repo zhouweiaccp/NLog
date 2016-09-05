@@ -74,6 +74,7 @@ namespace NLog
         {
             this.TimeStamp = TimeSource.Current.Time;
             this.SequenceID = Interlocked.Increment(ref globalSequenceId);
+            this.CouldContainNestedLogEventInfo = true; 
         }
 
         /// <summary>
@@ -179,6 +180,11 @@ namespace NLog
         /// Gets or sets the logger name.
         /// </summary>
         public string LoggerName { get; set; }
+
+        /// <summary>
+        /// Could one of <see cref="Parameters"/> of type <see cref="LogEventInfo"/>?
+        /// </summary>
+        public bool CouldContainNestedLogEventInfo { get; set; }
 
         /// <summary>
         /// Gets the logger short name.
@@ -497,7 +503,7 @@ namespace NLog
                 this.formattedMessage = this.Message;
             }
             else
-            {
+            { 
                 try
                 {
                     this.formattedMessage = string.Format(this.FormatProvider ?? CultureInfo.CurrentCulture, this.Message, this.Parameters);
