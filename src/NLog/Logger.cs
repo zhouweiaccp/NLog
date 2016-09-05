@@ -31,6 +31,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+using System.Globalization;
+
 namespace NLog
 {
     using System;
@@ -56,12 +58,17 @@ namespace NLog
         private volatile bool isWarnEnabled;
         private volatile bool isErrorEnabled;
         private volatile bool isFatalEnabled;
+        /// <summary>
+        /// DefaultCultureInfo "cached", because reading it, is expensive due to locks.
+        /// </summary>
+        private CultureInfo DefaultCultureInfo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Logger"/> class.
         /// </summary>
         protected internal Logger()
         {
+            DefaultCultureInfo = this.Factory.DefaultCultureInfo;
         }
 
         /// <summary>
@@ -383,7 +390,7 @@ namespace NLog
 
         internal void WriteToTargets(LogLevel level, Exception ex, [Localizable(false)] string message, object[] args)
         {
-            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, this.Factory.DefaultCultureInfo, message, args)), this.Factory);
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, DefaultCultureInfo, message, args)), this.Factory);
         }
 
         internal void WriteToTargets(LogLevel level, Exception ex, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
@@ -396,7 +403,7 @@ namespace NLog
         {
             if (logEvent.FormatProvider == null)
             {
-                logEvent.FormatProvider = this.Factory.DefaultCultureInfo;
+                logEvent.FormatProvider = DefaultCultureInfo;
             }
             return logEvent;
 
@@ -581,7 +588,7 @@ namespace NLog
 
         internal void WriteToTargets(LogLevel level, [Localizable(false)] string message, object[] args)
         {
-            this.WriteToTargets(level, this.Factory.DefaultCultureInfo, message, args);
+            this.WriteToTargets(level, DefaultCultureInfo, message, args);
         }
 
         internal void WriteToTargets(LogEventInfo logEvent)
@@ -605,7 +612,8 @@ namespace NLog
             this.isWarnEnabled = newConfiguration.IsEnabled(LogLevel.Warn);
             this.isErrorEnabled = newConfiguration.IsEnabled(LogLevel.Error);
             this.isFatalEnabled = newConfiguration.IsEnabled(LogLevel.Fatal);
-
+            this.DefaultCultureInfo = this.Factory.DefaultCultureInfo;
+            
             var loggerReconfiguredDelegate = this.LoggerReconfigured;
 
             if (loggerReconfiguredDelegate != null)
