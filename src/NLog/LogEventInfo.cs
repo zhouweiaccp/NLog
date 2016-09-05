@@ -496,29 +496,103 @@ namespace NLog
             return value.GetType().IsPrimitive || (value is string);
         }
 
-        private void CalcFormattedMessage()
+        private void CalcFormattedMessage(string formattedMessage)
         {
+
+            if (formattedMessage != null)
+            {
+                this.formattedMessage = formattedMessage;
+                return;
+            }
+
             if (this.Parameters == null || this.Parameters.Length == 0)
             {
                 this.formattedMessage = this.Message;
             }
             else
-            { 
-                try
-                {
-                    this.formattedMessage = string.Format(this.FormatProvider ?? CultureInfo.CurrentCulture, this.Message, this.Parameters);
-                }
-                catch (Exception exception)
-                {
-                    this.formattedMessage = this.Message;
-                    InternalLogger.Warn(exception, "Error when formatting a message.");
+            {
+                string formattedMessage2;
+                formattedMessage2 = CreateFormattedMessage(this.FormatProvider, this.Message, this.Parameters);
+                this.formattedMessage = formattedMessage2;
+            }
+        }
 
-                    if (exception.MustBeRethrown())
-                    {
-                        throw;
-                    }
+        internal static string CreateFormattedMessage(IFormatProvider provider, string message, object[] messageParameters)
+        {
+            string formattedMessage;
+            try
+            {
+                formattedMessage = string.Format(provider ?? CultureInfo.CurrentCulture, message,
+                    messageParameters);
+            }
+            catch (Exception exception)
+            {
+                formattedMessage = message;
+                InternalLogger.Warn(exception, "Error when formatting a message.");
+
+                if (exception.MustBeRethrown())
+                {
+                    throw;
                 }
             }
+            return formattedMessage;
+        }
+
+        /// <summary>
+        /// todo unit, int, bool, etc.
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="message"></param>
+        /// <param name="messageParameter"></param>
+        /// <returns></returns>
+        internal static string CreateFormattedMessage(IFormatProvider provider, string message, int messageParameter)
+        {
+           
+            string formattedMessage;
+            try
+            {
+                var formatProvider1 = provider ?? CultureInfo.CurrentCulture;
+                formattedMessage = string.Format(formatProvider1, message,
+                    messageParameter.ToString(formatProvider1));
+            }
+            catch (Exception exception)
+            {
+                formattedMessage = message;
+                InternalLogger.Warn(exception, "Error when formatting a message.");
+
+                if (exception.MustBeRethrown())
+                {
+                    throw;
+                }
+            }
+            return formattedMessage;
+        }
+
+        /// <summary>
+        /// Formatted without message, but only value
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static string CreateFormattedMessage(IFormatProvider provider, int value)
+        {
+            string formattedMessage;
+            try
+            {
+                var formatProvider1 = provider ?? CultureInfo.CurrentCulture;
+                formattedMessage = value.ToString(formatProvider1);
+            }
+            catch (Exception exception)
+            {
+                formattedMessage = string.Empty;
+                InternalLogger.Warn(exception, "Error when formatting a message.");
+
+                if (exception.MustBeRethrown())
+                {
+                    throw;
+                }
+            }
+            return formattedMessage;
         }
 
         private void ResetFormattedMessage()
