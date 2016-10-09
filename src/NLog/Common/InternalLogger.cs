@@ -47,18 +47,40 @@ namespace NLog.Common
     using System.Diagnostics;
 #endif
 
+    public class InternalLoggerLogEventEventArgs : CancelEventArgs    {
+        public InternalLoggerLogEventEventArgs(LogLevel level, string formattedMessage, string message, object[] messageArguments)
+        {
+            Level = level;
+            Message = message;
+            FormattedMessage = formattedMessage;
+            MessageArguments = messageArguments;
+        }
+
+        public LogLevel Level { get; private set; }
+
+        public string Message { get; private set; }
+
+        public string FormattedMessage { get; private set; }
+
+        public object[] MessageArguments { get; private set; }
+    }
+
+
     /// <summary>
-    /// NLog internal logger.
-    /// 
-    /// Writes to file, console or custom textwriter (see <see cref="InternalLogger.LogWriter"/>)
-    /// </summary>
-    /// <remarks>
-    /// Don't use <see cref="ExceptionHelper.MustBeRethrown"/> as that can lead to recursive calls - stackoverflows
-    /// </remarks>
-    public static partial class InternalLogger
+        /// NLog internal logger.
+        /// 
+        /// Writes to file, console or custom textwriter (see <see cref="InternalLogger.LogWriter"/>)
+        /// </summary>
+        /// <remarks>
+        /// Don't use <see cref="ExceptionHelper.MustBeRethrown"/> as that can lead to recursive calls - stackoverflows
+        /// </remarks>
+        public static partial class InternalLogger
     {
         private static readonly object LockObject = new object();
         private static string _logFile;
+
+        public static event EventHandler<InternalLoggerLogEventEventArgs> BeforeLogEventWrite;
+
 
         /// <summary>
         /// Initializes static members of the InternalLogger class.
@@ -226,6 +248,16 @@ namespace NLog.Common
                 if (args != null)
                 {
                     formattedMessage = string.Format(CultureInfo.InvariantCulture, message, args);
+                }
+
+                if (BeforeLogEventWrite != null)
+                {
+                    InternalLoggerLogEventEventArgs e = new InternalLoggerLogEventEventArgs(level, formattedMessage, message, args);
+                    BeforeLogEventWrite(typeof(InternalLogger), e);
+                    if (e.Cancel)
+                    {
+                        return;
+                    }
                 }
 
                 var builder = new StringBuilder(message.Length + 32);
