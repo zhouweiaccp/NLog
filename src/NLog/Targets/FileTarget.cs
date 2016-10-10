@@ -1229,13 +1229,12 @@ namespace NLog.Targets
 
             try
             {
-#if SILVERLIGHT && !WINDOWS_PHONE
-                foreach (string s in Directory.EnumerateFiles(dirName, fileNameMask))
-#else
-                foreach (string s in Directory.GetFiles(dirName, fileNameMask))
-#endif
+
+                var filePaths = GetFilePaths(dirName, fileNameMask);
+
+                foreach (string filePath in filePaths)
                 {
-                    string baseName = Path.GetFileName(s);
+                    string baseName = Path.GetFileName(filePath);
                     string number = baseName.Substring(fileTemplate.BeginAt, baseName.Length - trailerLength - fileTemplate.BeginAt);
                     int num;
 
@@ -1251,7 +1250,7 @@ namespace NLog.Targets
                     nextNumber = Math.Max(nextNumber, num);
                     minNumber = minNumber != -1 ? Math.Min(minNumber, num) : num;
 
-                    number2Name[num] = s;
+                    number2Name[num] = filePath;
                 }
 
                 nextNumber++;
@@ -1348,6 +1347,17 @@ namespace NLog.Targets
                 }
                 while ((currentFileInfo.Exists) && (currentFileInfo.CreationTime == originalFileCreationTime));
             }
+        }
+
+        /// <summary>
+        /// Convert pattern to mask. Input file-{#} ... output file-* 
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        private static string GetArchiveFileMask(string pattern)
+        {
+            FileNameTemplate fileTemplate;
+            return GetArchiveFileMask(pattern, out fileTemplate);
         }
 
         /// <summary>
@@ -1571,6 +1581,17 @@ namespace NLog.Targets
 #endif
         }
 
+
+        private static IEnumerable<string> GetFilePaths(string archiveFolderPath, string fileArchiveMask = null)
+        {
+#if SILVERLIGHT && !WINDOWS_PHONE
+            var files =  fileArchiveMask == null ? Directory.EnumerateFiles(archiveFolderPath) : Directory.EnumerateFiles(archiveFolderPath, fileArchiveMask);
+#else
+            var files = fileArchiveMask == null ? Directory.GetFiles(archiveFolderPath) : Directory.GetFiles(archiveFolderPath, fileArchiveMask);
+#endif
+            return files;
+        }
+
         /// <summary>
         /// Replaces the string-based pattern i.e. {#} in a file name with the value passed in <paramref
         /// name="replacementValue"/> parameter.
@@ -1638,11 +1659,9 @@ namespace NLog.Targets
                     return;
                 }
 
-#if SILVERLIGHT && !WINDOWS_PHONE
-                var files = directoryInfo.EnumerateFiles(fileNameMask).OrderBy(n => n.CreationTime).Select(n => n.FullName);
-#else
-                var files = directoryInfo.GetFiles(fileNameMask).OrderBy(n => n.CreationTime).Select(n => n.FullName);
-#endif
+
+                var files = GetFiles(directoryInfo, fileNameMask).OrderBy(n => n.CreationTime).Select(n => n.FullName);
+
                 List<string> filesByDate = new List<string>();
 
                 foreach (string nextFile in files)
@@ -1650,10 +1669,10 @@ namespace NLog.Targets
                     string archiveFileName = Path.GetFileName(nextFile);
                     int lastIndexOfStar = fileNameMask.LastIndexOf('*');
 
-                    if (lastIndexOfStar + dateFormat.Length <= archiveFileName.Length)
+                    if (archiveFileName != null && lastIndexOfStar + dateFormat.Length <= archiveFileName.Length)
                     {
                         string datePart = archiveFileName.Substring(lastIndexOfStar, dateFormat.Length);
-                        DateTime fileDate = DateTime.MinValue;
+                        DateTime fileDate;
                         if (DateTime.TryParseExact(datePart, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out fileDate))
                         {
                             filesByDate.Add(nextFile);
@@ -2317,15 +2336,13 @@ namespace NLog.Targets
                 archiveFileQueue.Clear();
                 if (Directory.Exists(archiveFolderPath))
                 {
-#if SILVERLIGHT && !WINDOWS_PHONE
-                    var files = Directory.EnumerateFiles(archiveFolderPath);
-#else
-                    var files = Directory.GetFiles(archiveFolderPath);
-#endif
-                    foreach (string nextFile in files.OrderBy(f => ExtractArchiveNumberFromFileName(f)))
+                    var filePaths = GetFilePaths(archiveFolderPath);
+                    foreach (string nextFile in filePaths.OrderBy(f => ExtractArchiveNumberFromFileName(f)))
                         archiveFileQueue.Enqueue(nextFile);
                 }
             }
+
+
 
             /// <summary>
             /// Adds a file into archive.
@@ -2444,6 +2461,9 @@ namespace NLog.Targets
             }
         }
 
+        /// <summary>
+        /// A filename with a (possible) pattern between {# and #}. E.g. {#}, {##}, {###} etc.
+        /// </summary>
         private sealed class FileNameTemplate
         {
             /// <summary>
