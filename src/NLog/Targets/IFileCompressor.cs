@@ -35,7 +35,6 @@ namespace NLog.Targets
 {
     /// <summary>
     /// <see cref="FileTarget"/> may be configured to compress archived files in a custom way
-    /// by setting <see cref="FileTarget.FileCompressor"/> before logging your first event.
     /// </summary>
     public interface IFileCompressor
     {

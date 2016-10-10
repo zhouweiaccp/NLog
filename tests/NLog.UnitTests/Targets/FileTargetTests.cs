@@ -326,19 +326,19 @@ namespace NLog.UnitTests.Targets
             logger.Trace("running test");
         }
 
-#if NET3_5 || NET4_0 || NET4_5
-        public static IEnumerable<object[]> ArchiveFileOnStartTests_TestParameters
-        {
-            get
-            {
-                var booleanValues = new[] { true, false };
-                return
-                    from enableCompression in booleanValues
-                    from customFileCompressor in booleanValues
-                    select new object[] { enableCompression, customFileCompressor };
-            }
-        }
-#else
+//#if NET3_5 || NET4_0 || NET4_5
+//        public static IEnumerable<object[]> ArchiveFileOnStartTests_TestParameters
+//        {
+//            get
+//            {
+//                var booleanValues = new[] { true, false };
+//                return
+//                    from enableCompression in booleanValues
+//                    from customFileCompressor in booleanValues
+//                    select new object[] { enableCompression, customFileCompressor };
+//            }
+//        }
+//#else
         public static IEnumerable<object[]> ArchiveFileOnStartTests_TestParameters
         {
             get
@@ -349,107 +349,107 @@ namespace NLog.UnitTests.Targets
                     select new object[] { enableCompression, false };
             }
         }
-#endif
-        [Theory]
-        [PropertyData("ArchiveFileOnStartTests_TestParameters")]
-        public void ArchiveFileOnStartTests(bool enableCompression, bool customFileCompressor)
-        {
-            var logFile = Path.GetTempFileName();
-            var tempArchiveFolder = Path.Combine(Path.GetTempPath(), "Archive");
-            var archiveExtension = enableCompression ? "zip" : "txt";
-            IFileCompressor fileCompressor = null;
-            try
-            {
-                if (customFileCompressor)
-                {
-                    fileCompressor = FileTarget.FileCompressor;
-                    FileTarget.FileCompressor = new CustomFileCompressor();
-                }
+//#endif
+        //[Theory]
+        //[PropertyData("ArchiveFileOnStartTests_TestParameters")]
+        //public void ArchiveFileOnStartTests(bool enableCompression, bool customFileCompressor)
+        //{
+        //    var logFile = Path.GetTempFileName();
+        //    var tempArchiveFolder = Path.Combine(Path.GetTempPath(), "Archive");
+        //    var archiveExtension = enableCompression ? "zip" : "txt";
+        //    IFileCompressor fileCompressor = null;
+        //    try
+        //    {
+        //        if (customFileCompressor)
+        //        {
+        //            fileCompressor = FileTarget.FileCompressor;
+        //            FileTarget.FileCompressor = new CustomFileCompressor();
+        //        }
 
-                // Configure first time with ArchiveOldFileOnStartup = false. 
-                var fileTarget = WrapFileTarget(new FileTarget
-                {
-                    ArchiveOldFileOnStartup = false,
-                    FileName = SimpleLayout.Escape(logFile),
-                    LineEnding = LineEndingMode.LF,
-                    Layout = "${level} ${message}"
-                });
+        //        // Configure first time with ArchiveOldFileOnStartup = false. 
+        //        var fileTarget = WrapFileTarget(new FileTarget
+        //        {
+        //            ArchiveOldFileOnStartup = false,
+        //            FileName = SimpleLayout.Escape(logFile),
+        //            LineEnding = LineEndingMode.LF,
+        //            Layout = "${level} ${message}"
+        //        });
 
-                SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
+        //        SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
 
-                logger.Debug("aaa");
-                logger.Info("bbb");
-                logger.Warn("ccc");
+        //        logger.Debug("aaa");
+        //        logger.Info("bbb");
+        //        logger.Warn("ccc");
 
-                LogManager.Configuration = null;
+        //        LogManager.Configuration = null;
 
-                AssertFileContents(logFile, "Debug aaa\nInfo bbb\nWarn ccc\n", Encoding.UTF8);
+        //        AssertFileContents(logFile, "Debug aaa\nInfo bbb\nWarn ccc\n", Encoding.UTF8);
 
-                // Configure second time with ArchiveOldFileOnStartup = false again. 
-                // Expected behavior: Extra content to be appended to the file.
-                fileTarget = WrapFileTarget(new FileTarget
-                {
-                    ArchiveOldFileOnStartup = false,
-                    FileName = SimpleLayout.Escape(logFile),
-                    LineEnding = LineEndingMode.LF,
-                    Layout = "${level} ${message}"
-                });
+        //        // Configure second time with ArchiveOldFileOnStartup = false again. 
+        //        // Expected behavior: Extra content to be appended to the file.
+        //        fileTarget = WrapFileTarget(new FileTarget
+        //        {
+        //            ArchiveOldFileOnStartup = false,
+        //            FileName = SimpleLayout.Escape(logFile),
+        //            LineEnding = LineEndingMode.LF,
+        //            Layout = "${level} ${message}"
+        //        });
 
-                SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
+        //        SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
 
-                logger.Debug("aaa");
-                logger.Info("bbb");
-                logger.Warn("ccc");
+        //        logger.Debug("aaa");
+        //        logger.Info("bbb");
+        //        logger.Warn("ccc");
 
-                LogManager.Configuration = null;
-                AssertFileContents(logFile, "Debug aaa\nInfo bbb\nWarn ccc\nDebug aaa\nInfo bbb\nWarn ccc\n", Encoding.UTF8);
+        //        LogManager.Configuration = null;
+        //        AssertFileContents(logFile, "Debug aaa\nInfo bbb\nWarn ccc\nDebug aaa\nInfo bbb\nWarn ccc\n", Encoding.UTF8);
 
 
-                // Configure third time with ArchiveOldFileOnStartup = true again. 
-                // Expected behavior: Extra content will be stored in a new file; the 
-                //      old content should be moved into a new location.
+        //        // Configure third time with ArchiveOldFileOnStartup = true again. 
+        //        // Expected behavior: Extra content will be stored in a new file; the 
+        //        //      old content should be moved into a new location.
 
-                var archiveTempName = Path.Combine(tempArchiveFolder, "archive." + archiveExtension);
+        //        var archiveTempName = Path.Combine(tempArchiveFolder, "archive." + archiveExtension);
 
-                FileTarget ft;
-                fileTarget = WrapFileTarget(ft = new FileTarget
-                {
-                    EnableArchiveFileCompression = enableCompression,
-                    FileName = SimpleLayout.Escape(logFile),
-                    LineEnding = LineEndingMode.LF,
-                    Layout = "${level} ${message}",
-                    ArchiveOldFileOnStartup = true,
-                    ArchiveFileName = archiveTempName,
-                    ArchiveNumbering = ArchiveNumberingMode.Sequence,
-                    MaxArchiveFiles = 1
-                });
+        //        FileTarget ft;
+        //        fileTarget = WrapFileTarget(ft = new FileTarget
+        //        {
+        //            EnableArchiveFileCompression = enableCompression,
+        //            FileName = SimpleLayout.Escape(logFile),
+        //            LineEnding = LineEndingMode.LF,
+        //            Layout = "${level} ${message}",
+        //            ArchiveOldFileOnStartup = true,
+        //            ArchiveFileName = archiveTempName,
+        //            ArchiveNumbering = ArchiveNumberingMode.Sequence,
+        //            MaxArchiveFiles = 1
+        //        });
 
-                SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
-                logger.Debug("ddd");
-                logger.Info("eee");
-                logger.Warn("fff");
+        //        SimpleConfigurator.ConfigureForTargetLogging(fileTarget, LogLevel.Debug);
+        //        logger.Debug("ddd");
+        //        logger.Info("eee");
+        //        logger.Warn("fff");
 
-                LogManager.Configuration = null;
-                AssertFileContents(logFile, "Debug ddd\nInfo eee\nWarn fff\n", Encoding.UTF8);
-                Assert.True(File.Exists(archiveTempName));
+        //        LogManager.Configuration = null;
+        //        AssertFileContents(logFile, "Debug ddd\nInfo eee\nWarn fff\n", Encoding.UTF8);
+        //        Assert.True(File.Exists(archiveTempName));
 
-                var assertFileContents = ft.EnableArchiveFileCompression ?
-                    new Action<string, string, Encoding>(AssertZipFileContents) :
-                    AssertFileContents;
+        //        var assertFileContents = ft.EnableArchiveFileCompression ?
+        //            new Action<string, string, Encoding>(AssertZipFileContents) :
+        //            AssertFileContents;
 
-                assertFileContents(archiveTempName, "Debug aaa\nInfo bbb\nWarn ccc\nDebug aaa\nInfo bbb\nWarn ccc\n",
-                    Encoding.UTF8);
-            }
-            finally
-            {
-                if (customFileCompressor)
-                    FileTarget.FileCompressor = fileCompressor;
-                if (File.Exists(logFile))
-                    File.Delete(logFile);
-                if (Directory.Exists(tempArchiveFolder))
-                    Directory.Delete(tempArchiveFolder, true);
-            }
-        }
+        //        assertFileContents(archiveTempName, "Debug aaa\nInfo bbb\nWarn ccc\nDebug aaa\nInfo bbb\nWarn ccc\n",
+        //            Encoding.UTF8);
+        //    }
+        //    finally
+        //    {
+        //        if (customFileCompressor)
+        //            FileTarget.FileCompressor = fileCompressor;
+        //        if (File.Exists(logFile))
+        //            File.Delete(logFile);
+        //        if (Directory.Exists(tempArchiveFolder))
+        //            Directory.Delete(tempArchiveFolder, true);
+        //    }
+        //}
 
         public static IEnumerable<object[]> ReplaceFileContentsOnEachWriteTest_TestParameters
         {
@@ -1474,7 +1474,7 @@ namespace NLog.UnitTests.Targets
                     Layout = "${message}",
                     Footer = footer,
                     MaxArchiveFiles = 2,
-                    WriteFooterOnArchivingOnly = writeFooterOnArchivingOnly
+                    //WriteFooterOnArchivingOnly = writeFooterOnArchivingOnly
                 };
 
                 SimpleConfigurator.ConfigureForTargetLogging(ft, LogLevel.Debug);
