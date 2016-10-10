@@ -1294,7 +1294,7 @@ namespace NLog.Targets
                 //The archive file name is given. There are two possibilities
                 //(1) User supplied the Filename with pattern
                 //(2) User supplied the normal filename
-                fileNamePattern = this.ArchiveFileName.Render(eventInfo);
+                fileNamePattern = this.ArchiveFileName.Render(eventInfo ?? LogEventInfo.CreateNullEvent());
             }
             return fileNamePattern;
         }

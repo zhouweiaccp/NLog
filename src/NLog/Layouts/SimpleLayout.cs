@@ -292,6 +292,7 @@ namespace NLog.Layouts
         /// <returns>The rendered layout.</returns>
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
+           
             if (IsFixedText)
             {
                 return this.fixedText;
