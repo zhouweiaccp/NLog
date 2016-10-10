@@ -707,7 +707,8 @@ namespace NLog.Targets
             {
                 try
                 {
-                    fileArchive.InitializeForArchiveFolderPath(Path.GetDirectoryName(fileNamePattern));
+                    //todo fileNamePattern is not alwasy a pattern, but just a filename ? 
+                    fileArchive.InitializeForArchiveFolderPath(Path.GetDirectoryName(fileNamePattern), GetArchiveFileMask(fileNamePattern));
                 }
                 catch (Exception exception)
                 {
@@ -2331,12 +2332,13 @@ namespace NLog.Targets
             /// Adds the files in the specified path to the archive file queue.
             /// </summary>
             /// <param name="archiveFolderPath">The folder where the archive files are stored.</param>
-            public void InitializeForArchiveFolderPath(string archiveFolderPath)
+            /// <param name="fileArchiveMask">mask for archive files</param>
+            public void InitializeForArchiveFolderPath(string archiveFolderPath, string fileArchiveMask)
             {
                 archiveFileQueue.Clear();
                 if (Directory.Exists(archiveFolderPath))
                 {
-                    var filePaths = GetFilePaths(archiveFolderPath);
+                    var filePaths = GetFilePaths(archiveFolderPath, fileArchiveMask);
                     foreach (string nextFile in filePaths.OrderBy(f => ExtractArchiveNumberFromFileName(f)))
                         archiveFileQueue.Enqueue(nextFile);
                 }
