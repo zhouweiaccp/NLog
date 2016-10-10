@@ -1209,9 +1209,17 @@ namespace NLog.Targets
         /// <param name="pattern">File name template which contains the numeric pattern to be replaced.</param>
         private void ArchiveBySequence(string fileName, string pattern)
         {
-            FileNameTemplate fileTemplate = new FileNameTemplate(Path.GetFileName(pattern));
+            FileNameTemplate fileTemplate;
+            var fileNameMask = GetArchiveFileMask(pattern, out fileTemplate);
+            if (fileNameMask == null)
+            {
+                InternalLogger.Debug("ArchiveBySequence - fileNameMask is null");
+                return;
+            }
+
+
+
             int trailerLength = fileTemplate.Template.Length - fileTemplate.EndAt;
-            string fileNameMask = fileTemplate.ReplacePattern("*");
 
             string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
             int nextNumber = -1;
@@ -1273,6 +1281,7 @@ namespace NLog.Targets
             ArchiveFile(fileName, newFileName);
         }
 
+   
         /// <summary>
         /// Archives fileName to archiveFileName.
         /// </summary>
@@ -1341,6 +1350,29 @@ namespace NLog.Targets
             }
         }
 
+        /// <summary>
+        /// Convert pattern to mask. Input file-{#} ... output file-* 
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="fileTemplate"></param>
+        /// <returns></returns>
+        private static string GetArchiveFileMask(string pattern, out FileNameTemplate fileTemplate)
+        {
+            string baseNamePattern = Path.GetFileName(pattern);
+
+            if (string.IsNullOrEmpty(baseNamePattern))
+            {
+                fileTemplate = null;
+                return null;
+            }
+
+            fileTemplate = new FileNameTemplate(baseNamePattern);
+           
+            string fileNameMask = fileTemplate.ReplacePattern("*");
+            return fileNameMask;
+        }
+
+
 #if !NET_CF
         /// <summary>
         /// <para>
@@ -1357,15 +1389,14 @@ namespace NLog.Targets
         /// <param name="logEvent">Log event that the <see cref="FileTarget"/> instance is currently processing.</param>
         private void ArchiveByDateAndSequence(string fileName, string pattern, LogEventInfo logEvent)
         {
-            string baseNamePattern = Path.GetFileName(pattern);
-
-            if (string.IsNullOrEmpty(baseNamePattern))
+            FileNameTemplate fileTemplate;
+            var fileNameMask = GetArchiveFileMask(pattern, out fileTemplate);
+            if (fileNameMask == null)
             {
+                InternalLogger.Debug("ArchiveByDateAndSequence - fileNameMask is null");
                 return;
             }
 
-            FileNameTemplate fileTemplate = new FileNameTemplate(baseNamePattern);
-            string fileNameMask = fileTemplate.ReplacePattern("*");
             string dateFormat = GetArchiveDateFormatString(this.ArchiveDateFormat);
 
             string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
