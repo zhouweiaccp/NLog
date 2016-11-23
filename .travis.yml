@@ -6,7 +6,7 @@ env:
 
 matrix:
   include:
-    - mono: 2.10.8
+    - mono: 3.8.0
       env: MONO_V=MONO2
       solution: src/NLog.mono2.sln
     - mono: latest
