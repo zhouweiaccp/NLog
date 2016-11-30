@@ -1,9 +1,9 @@
 version: $(major_version).$(minor_version).{build}
 environment:
-  major_version:4
-  minor_version:4
-  patch_version:0;
-  prerelease_suffix:-rc1
+  major_version: 4
+  minor_version: 4
+  patch_version: 0;
+  prerelease_suffix:
   
 
 clone_folder: c:\projects\nlog
