@@ -1,11 +1,13 @@
 
 version: 5.0.0-beta{build}
 clone_folder: c:\projects\nlog
-build_script:
-  - ps: .\build.ps1
 
-test_script:
-  - ps: .\run-tests.ps1
+platform: Any CPU
+configuration: Release
+build:
+  project: NLog.sln 
+  publish_nuget: true           
+  publish_nuget_symbols: true  
 
 deploy: off
 artifacts:
