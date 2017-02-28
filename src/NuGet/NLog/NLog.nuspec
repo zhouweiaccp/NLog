@@ -6,7 +6,7 @@
         <title>NLog</title>
         <authors>Kim Christensen,Julian Verdurmen</authors>
         <owners>Julian Verdurmen</owners>
-        <licenseUrl>http://raw.github.com/NLog/NLog/master/LICENSE.txt</licenseUrl>
+        <licenseUrl>https://raw.github.com/NLog/NLog/master/LICENSE.txt</licenseUrl>
         <projectUrl>http://nlog-project.org/</projectUrl>
         <iconUrl>http://nlog-project.org/N.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
