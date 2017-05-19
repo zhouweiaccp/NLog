@@ -506,6 +506,63 @@ namespace NLog.UnitTests.Layouts
             AssertDebugLastMessage("debug", ExpectedIncludeAllPropertiesWithExcludes);
         }
 
+
+        class JsonNetEncoder : IJsonSerializer
+        {
+            
+        }
+
+        [Fact]
+        public void IncludeAllJsonPropertiesJson_object()
+        {
+
+            LogManager.Configuration = CreateConfigurationFromString(@"
+            <nlog throwExceptions='true'>
+            <targets>
+                <target name='debug' type='Debug'  >
+                 <layout type=""JsonLayout"" IncludeAllProperties='true' ExcludeProperties='Excluded1,Excluded2'>
+            
+                 </layout>
+                </target>
+            </targets>
+                <rules>
+                    <logger name='*' minlevel='Debug' writeTo='debug' />
+                </rules>
+            </nlog>");
+
+
+            ILogger logger = LogManager.GetLogger("A");
+
+            var logEventInfo = CreateLogEventWithExcluded();
+
+            var object1 = new TestObject("object1");
+            var object2 = new TestObject("object2");
+
+            object1.Linked = object2;
+
+            logEventInfo.Properties.Clear();
+            logEventInfo.Properties["object"] = object2;
+
+            logger.Debug(logEventInfo);
+
+            var result = GetDebugLastMessage("debug");
+
+            // AssertDebugLastMessage("debug", ExpectedIncludeAllPropertiesWithExcludes);
+        }
+
+        private class TestObject
+        {
+            /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+            public TestObject(string name)
+            {
+                Name = name;
+            }
+
+            public string Name { get; set; }
+
+            public TestObject Linked { get; set; }
+        }
+
         private static LogEventInfo CreateLogEventWithExcluded()
         {
             var logEventInfo = new LogEventInfo

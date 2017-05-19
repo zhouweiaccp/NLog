@@ -167,6 +167,7 @@ namespace NLog.Layouts
                 foreach (var prop in logEvent.Properties)
                 {
                     //Determine property name
+
                     string propName = Internal.XmlHelper.XmlConvertToString(prop.Key ?? string.Empty);
                     if (string.IsNullOrEmpty(propName))
                         continue;

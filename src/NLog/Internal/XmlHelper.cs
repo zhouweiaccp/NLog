@@ -177,6 +177,9 @@ namespace NLog.Internal
                     return XmlConvert.ToString((Char)value);
                 case TypeCode.String:
                     return (string)value;
+
+
+
                 default:
                     try
                     {
