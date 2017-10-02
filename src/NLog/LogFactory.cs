@@ -86,6 +86,26 @@ namespace NLog
         private List<string> candidateConfigFilePaths;
 
         /// <summary>
+        /// Configure the configuration, also apply these changes when the config gets reload and/or reset.
+        /// </summary>
+        /// <param name="changeConfig"></param>
+        public void Configure(Action<LoggingConfiguration> changeConfig)
+        {
+            InvokeConfigure(changeConfig);
+            ConfigurationChanged += (_, __) => { InvokeConfigure(changeConfig); };
+            ConfigurationReloaded += (_, __) => { InvokeConfigure(changeConfig); };
+        }
+
+        private void InvokeConfigure(Action<LoggingConfiguration> changeConfig)
+        {
+            var config = Configuration;
+            changeConfig(config);
+            //re-set
+            Configuration = config;
+        }
+
+
+        /// <summary>
         /// Occurs when logging <see cref="Configuration" /> changes. E.g. when the <see cref="Configuration"/> setter is used.
         /// </summary>
         public event EventHandler<LoggingConfigurationChangedEventArgs> ConfigurationChanged;
