@@ -74,7 +74,7 @@ namespace NLog
         }
 
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> changes.
+        /// Occurs when logging <see cref="Configuration" /> changes. E.g. when the <see cref="Configuration"/> setter is used.
         /// </summary>
         public static event EventHandler<LoggingConfigurationChangedEventArgs> ConfigurationChanged
         {
@@ -84,7 +84,7 @@ namespace NLog
 
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> gets reloaded.
+        /// Occurs when logging <see cref="Configuration" /> gets reloaded. E.g when the File Watcher detected a change in the config.
         /// </summary>
         public static event EventHandler<LoggingConfigurationReloadedEventArgs> ConfigurationReloaded
         {

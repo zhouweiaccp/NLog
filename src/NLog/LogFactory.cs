@@ -86,13 +86,13 @@ namespace NLog
         private List<string> candidateConfigFilePaths;
 
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> changes.
+        /// Occurs when logging <see cref="Configuration" /> changes. E.g. when the <see cref="Configuration"/> setter is used.
         /// </summary>
         public event EventHandler<LoggingConfigurationChangedEventArgs> ConfigurationChanged;
 
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> gets reloaded.
+        /// Occurs when logging <see cref="Configuration" /> gets reloaded. E.g when the File Watcher detected a change in the config.
         /// </summary>
         public event EventHandler<LoggingConfigurationReloadedEventArgs> ConfigurationReloaded;
 #endif
@@ -727,26 +727,22 @@ namespace NLog
         }
 
         /// <summary>
-        /// Raises the event when the configuration is reloaded. 
+        /// Raises the event when the configuration is reloaded. E.g. when the <see cref="Configuration"/> setter is used.
         /// </summary>
         /// <param name="e">Event arguments.</param>
         protected virtual void OnConfigurationChanged(LoggingConfigurationChangedEventArgs e)
         {
-            var changed = ConfigurationChanged;
-            if (changed != null)
-            {
-                changed(this, e);
-            }
+            ConfigurationChanged?.Invoke(this, e);
         }
 
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
         /// <summary>
-        /// Raises the event when the configuration is reloaded. 
+        /// Raises the event when the configuration is reloaded. E.g when the File Watcher detected a change in the config.
         /// </summary>
         /// <param name="e">Event arguments</param>
         protected virtual void OnConfigurationReloaded(LoggingConfigurationReloadedEventArgs e)
         {
-            if (ConfigurationReloaded != null) ConfigurationReloaded.Invoke(this, e);
+            ConfigurationReloaded?.Invoke(this, e);
         }
 #endif
 
@@ -804,7 +800,8 @@ namespace NLog
                         {
                             newConfig.CopyVariables(this.config.Variables);
                         }
-                        this.Configuration = newConfig;
+                        
+                        this.Configuration = newConfig; //fires OnConfigurationReloaded
                         OnConfigurationReloaded(new LoggingConfigurationReloadedEventArgs(true));
                     }
                     else
