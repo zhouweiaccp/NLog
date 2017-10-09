@@ -105,7 +105,7 @@ namespace NLog
         {
             if (this.IsEnabled(logEvent.Level))
             {
-                this.WriteToTargets(logEvent);
+                this.WriteToTargets5(logEvent);
             }
         }
 
@@ -118,7 +118,7 @@ namespace NLog
         {
             if (this.IsEnabled(logEvent.Level))
             {
-                this.WriteToTargets(wrapperType, logEvent);
+                this.WriteToTargets6(wrapperType, logEvent);
             }
         }
 
@@ -137,7 +137,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, null, value);
+                this.WriteToTargets_generic(level, null, value);
             }
         }
 
@@ -152,7 +152,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, formatProvider, value);
+                this.WriteToTargets_generic(level, formatProvider, value);
             }
         }
 
@@ -170,7 +170,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(level, null, messageFunc());
+                this.WriteToTargets_noParams(level, null, messageFunc());
             }
         }
 
@@ -199,7 +199,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, formatProvider, message, args); 
+                this.WriteToTargets2(level, formatProvider, message, args); 
             }
         }
 
@@ -212,7 +212,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, null, message);
+                this.WriteToTargets_noParams(level, null, message);
             }
         }
 
@@ -226,7 +226,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, message, args);
+                this.WriteToTargets4(level, message, args);
             }
         }
 
@@ -242,7 +242,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, message, exception);
+                this.WriteToTargets3(level, message, exception);
             }
         }
 
@@ -257,7 +257,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, exception, message, args);
+                this.WriteToTargets7(level, exception, message, args);
             }
         }
 
@@ -273,7 +273,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, exception, formatProvider, message, args);
+                this.WriteToTargets8(level, exception, formatProvider, message, args);
             }
         }
 
@@ -290,7 +290,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(level, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -306,7 +306,7 @@ namespace NLog
         {
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, message, new object[] { argument });
+                this.WriteToTargets4(level, message, new object[] { argument });
             }
         }
 
@@ -324,7 +324,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(level, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -342,7 +342,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(level, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -362,7 +362,7 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(level, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -382,16 +382,18 @@ namespace NLog
         { 
             if (this.IsEnabled(level))
             {
-                this.WriteToTargets(level, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(level, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
-        internal void WriteToTargets(LogLevel level, Exception ex, [Localizable(false)] string message, object[] args)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets7(LogLevel level, Exception ex, [Localizable(false)] string message, object[] args)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, this.Factory.DefaultCultureInfo, message, args)), this.Factory);
         }
 
-        internal void WriteToTargets(LogLevel level, Exception ex, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets8(LogLevel level, Exception ex, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, ex, formatProvider, message, args)), this.Factory);
         }
@@ -551,12 +553,14 @@ namespace NLog
             this.SetConfiguration(loggerConfiguration);
         }
 
-        internal void WriteToTargets(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets2(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, formatProvider, message, args)), this.Factory);
         }
 
-        internal void WriteToTargets(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets_noParams(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message)
         {
             // please note that this overload calls the overload of LogEventInfo.Create with object[] parameter on purpose -
             // to avoid unnecessary string.Format (in case of calling Create(LogLevel, string, IFormatProvider, object))
@@ -564,7 +568,8 @@ namespace NLog
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(logEvent), this.Factory);
         }
 
-        internal void WriteToTargets<T>(LogLevel level, IFormatProvider formatProvider, T value)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets_generic<T>(LogLevel level, IFormatProvider formatProvider, T value)
         {
             var logEvent = PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, formatProvider, value));
             var ex = value as Exception;
@@ -577,23 +582,27 @@ namespace NLog
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), logEvent, this.Factory);
         }
 
+        //todo undo rename (easier to refactor)
         [Obsolete("Use WriteToTargets(Exception ex, LogLevel level, IFormatProvider formatProvider, string message, object[] args) method instead. Marked obsolete before v4.3.11")]
-        internal void WriteToTargets(LogLevel level, [Localizable(false)] string message, Exception ex)
+        internal void WriteToTargets3(LogLevel level, [Localizable(false)] string message, Exception ex)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), PrepareLogEventInfo(LogEventInfo.Create(level, this.Name, message, ex)), this.Factory);
         }
 
-        internal void WriteToTargets(LogLevel level, [Localizable(false)] string message, object[] args)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets4(LogLevel level, [Localizable(false)] string message, object[] args)
         {
-            this.WriteToTargets(level, this.Factory.DefaultCultureInfo, message, args);
+            this.WriteToTargets2(level, this.Factory.DefaultCultureInfo, message, args);
         }
 
-        internal void WriteToTargets(LogEventInfo logEvent)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets5(LogEventInfo logEvent)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(logEvent.Level), PrepareLogEventInfo(logEvent), this.Factory);
         }
 
-        internal void WriteToTargets(Type wrapperType, LogEventInfo logEvent)
+        //todo undo rename (easier to refactor)
+        internal void WriteToTargets6(Type wrapperType, LogEventInfo logEvent)
         {
             LoggerImpl.Write(wrapperType ?? this.loggerType, this.GetTargetsForLevel(logEvent.Level), PrepareLogEventInfo(logEvent), this.Factory);
         }

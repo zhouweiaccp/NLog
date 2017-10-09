@@ -351,6 +351,13 @@ namespace NLog
         }
 
         /// <summary>
+        /// Could <see cref="Parameters"/> has a parameter of type <see cref="LogEventInfo"/>?
+        /// 
+        /// null: dunno, true: yes, false: no
+        /// </summary>
+        internal bool? CouldHaveLogEventInfoParameters { get; set; }
+
+        /// <summary>
         /// Gets the named parameters extracted from parsing <see cref="Message"/> as MessageTemplate
         /// </summary>
         public IMessageTemplateParameters MessageTemplateParameters
@@ -608,6 +615,7 @@ namespace NLog
         private void ResetFormattedMessage(bool rebuildMessageTemplateParameters)
         {
             this.formattedMessage = null;
+           
             if (rebuildMessageTemplateParameters && HasMessageTemplateParameters && !ReferenceEquals(this.Message, this.FormattedMessage))
             {
                 // Have re-captured MessageTemplateParameters
@@ -616,6 +624,7 @@ namespace NLog
 
         private bool ResetMessageTemplateParameters()
         {
+            this.CouldHaveLogEventInfoParameters = null;
             if (this.properties != null && HasMessageTemplateParameters)
             {
                 this.properties.MessageProperties = null;

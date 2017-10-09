@@ -111,7 +111,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, null, value);
+                this.WriteToTargets_generic(LogLevel.Trace, null, value);
             }
         }
 
@@ -125,7 +125,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Trace, formatProvider, value);
             }
         }
 
@@ -142,7 +142,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Trace, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Trace, null, messageFunc());
             }
         }
 
@@ -169,7 +169,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Trace, formatProvider, message, args); 
             }
         }
 
@@ -181,7 +181,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, null, message);
+                this.WriteToTargets_noParams(LogLevel.Trace, null, message);
             }
         }
 
@@ -195,7 +195,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, message, args);
+                this.WriteToTargets4(LogLevel.Trace, message, args);
             }
         }
 
@@ -210,7 +210,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, message, exception);
+                this.WriteToTargets3(LogLevel.Trace, message, exception);
             }
         }
 
@@ -223,7 +223,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, exception, message, null);
+                this.WriteToTargets7(LogLevel.Trace, exception, message, null);
             }
         }
 
@@ -237,7 +237,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, exception, message, args);
+                this.WriteToTargets7(LogLevel.Trace, exception, message, args);
             }
         }
 
@@ -253,7 +253,7 @@ namespace NLog
         {
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Trace, exception, formatProvider, message, args);
             }
         }
 
@@ -269,7 +269,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Trace, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -303,7 +303,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Trace, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Trace, message, new object[] { argument });
             }
         }
 
@@ -321,7 +321,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Trace, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -338,7 +338,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Trace, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -358,7 +358,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Trace, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -377,7 +377,7 @@ namespace NLog
         { 
             if (this.IsTraceEnabled)
             {
-                this.WriteToTargets(LogLevel.Trace, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Trace, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
@@ -397,7 +397,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, null, value);
+                this.WriteToTargets_generic(LogLevel.Debug, null, value);
             }
         }
 
@@ -411,7 +411,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Debug, formatProvider, value);
             }
         }
 
@@ -428,7 +428,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Debug, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Debug, null, messageFunc());
             }
         }
 
@@ -455,7 +455,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Debug, formatProvider, message, args); 
             }
         }
 
@@ -467,7 +467,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, null, message);
+                this.WriteToTargets_noParams(LogLevel.Debug, null, message);
             }
         }
 
@@ -481,7 +481,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, message, args);
+                this.WriteToTargets4(LogLevel.Debug, message, args);
             }
         }
 
@@ -496,7 +496,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, message, exception);
+                this.WriteToTargets3(LogLevel.Debug, message, exception);
             }
         }
 
@@ -509,7 +509,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, exception, message, null);
+                this.WriteToTargets7(LogLevel.Debug, exception, message, null);
             }
         }
 
@@ -523,7 +523,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, exception, message, args);
+                this.WriteToTargets7(LogLevel.Debug, exception, message, args);
             }
         }
 
@@ -539,7 +539,7 @@ namespace NLog
         {
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Debug, exception, formatProvider, message, args);
             }
         }
 
@@ -555,7 +555,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Debug, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -589,7 +589,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Debug, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Debug, message, new object[] { argument });
             }
         }
 
@@ -607,7 +607,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Debug, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -624,7 +624,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Debug, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -644,7 +644,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Debug, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -663,7 +663,7 @@ namespace NLog
         { 
             if (this.IsDebugEnabled)
             {
-                this.WriteToTargets(LogLevel.Debug, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Debug, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
@@ -683,7 +683,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, null, value);
+                this.WriteToTargets_generic(LogLevel.Info, null, value);
             }
         }
 
@@ -697,7 +697,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Info, formatProvider, value);
             }
         }
 
@@ -714,7 +714,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Info, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Info, null, messageFunc());
             }
         }
 
@@ -741,7 +741,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Info, formatProvider, message, args); 
             }
         }
 
@@ -753,7 +753,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, null, message);
+                this.WriteToTargets_noParams(LogLevel.Info, null, message);
             }
         }
 
@@ -767,7 +767,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, message, args);
+                this.WriteToTargets4(LogLevel.Info, message, args);
             }
         }
 
@@ -782,7 +782,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, message, exception);
+                this.WriteToTargets3(LogLevel.Info, message, exception);
             }
         }
 
@@ -795,7 +795,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, exception, message, null);
+                this.WriteToTargets7(LogLevel.Info, exception, message, null);
             }
         }
 
@@ -809,7 +809,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, exception, message, args);
+                this.WriteToTargets7(LogLevel.Info, exception, message, args);
             }
         }
 
@@ -825,7 +825,7 @@ namespace NLog
         {
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Info, exception, formatProvider, message, args);
             }
         }
 
@@ -841,7 +841,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Info, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -875,7 +875,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Info, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Info, message, new object[] { argument });
             }
         }
 
@@ -893,7 +893,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Info, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -910,7 +910,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Info, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -930,7 +930,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Info, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -949,7 +949,7 @@ namespace NLog
         { 
             if (this.IsInfoEnabled)
             {
-                this.WriteToTargets(LogLevel.Info, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Info, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
@@ -969,7 +969,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, null, value);
+                this.WriteToTargets_generic(LogLevel.Warn, null, value);
             }
         }
 
@@ -983,7 +983,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Warn, formatProvider, value);
             }
         }
 
@@ -1000,7 +1000,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Warn, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Warn, null, messageFunc());
             }
         }
 
@@ -1027,7 +1027,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Warn, formatProvider, message, args); 
             }
         }
 
@@ -1039,7 +1039,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, null, message);
+                this.WriteToTargets_noParams(LogLevel.Warn, null, message);
             }
         }
 
@@ -1053,7 +1053,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, message, args);
+                this.WriteToTargets4(LogLevel.Warn, message, args);
             }
         }
 
@@ -1068,7 +1068,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, message, exception);
+                this.WriteToTargets3(LogLevel.Warn, message, exception);
             }
         }
 
@@ -1081,7 +1081,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, exception, message, null);
+                this.WriteToTargets7(LogLevel.Warn, exception, message, null);
             }
         }
 
@@ -1095,7 +1095,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, exception, message, args);
+                this.WriteToTargets7(LogLevel.Warn, exception, message, args);
             }
         }
 
@@ -1111,7 +1111,7 @@ namespace NLog
         {
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Warn, exception, formatProvider, message, args);
             }
         }
 
@@ -1127,7 +1127,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Warn, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -1161,7 +1161,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Warn, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Warn, message, new object[] { argument });
             }
         }
 
@@ -1179,7 +1179,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Warn, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -1196,7 +1196,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Warn, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -1216,7 +1216,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Warn, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -1235,7 +1235,7 @@ namespace NLog
         { 
             if (this.IsWarnEnabled)
             {
-                this.WriteToTargets(LogLevel.Warn, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Warn, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
@@ -1255,7 +1255,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, null, value);
+                this.WriteToTargets_generic(LogLevel.Error, null, value);
             }
         }
 
@@ -1269,7 +1269,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Error, formatProvider, value);
             }
         }
 
@@ -1286,7 +1286,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Error, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Error, null, messageFunc());
             }
         }
 
@@ -1313,7 +1313,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Error, formatProvider, message, args); 
             }
         }
 
@@ -1325,7 +1325,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, null, message);
+                this.WriteToTargets_noParams(LogLevel.Error, null, message);
             }
         }
 
@@ -1339,7 +1339,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, message, args);
+                this.WriteToTargets4(LogLevel.Error, message, args);
             }
         }
 
@@ -1354,7 +1354,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, message, exception);
+                this.WriteToTargets3(LogLevel.Error, message, exception);
             }
         }
 
@@ -1367,7 +1367,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, exception, message, null);
+                this.WriteToTargets7(LogLevel.Error, exception, message, null);
             }
         }
 
@@ -1381,7 +1381,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, exception, message, args);
+                this.WriteToTargets7(LogLevel.Error, exception, message, args);
             }
         }
 
@@ -1397,7 +1397,7 @@ namespace NLog
         {
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Error, exception, formatProvider, message, args);
             }
         }
 
@@ -1413,7 +1413,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Error, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -1447,7 +1447,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Error, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Error, message, new object[] { argument });
             }
         }
 
@@ -1465,7 +1465,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Error, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -1482,7 +1482,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Error, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -1502,7 +1502,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Error, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -1521,7 +1521,7 @@ namespace NLog
         { 
             if (this.IsErrorEnabled)
             {
-                this.WriteToTargets(LogLevel.Error, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Error, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
@@ -1541,7 +1541,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, null, value);
+                this.WriteToTargets_generic(LogLevel.Fatal, null, value);
             }
         }
 
@@ -1555,7 +1555,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, formatProvider, value);
+                this.WriteToTargets_generic(LogLevel.Fatal, formatProvider, value);
             }
         }
 
@@ -1572,7 +1572,7 @@ namespace NLog
                     throw new ArgumentNullException("messageFunc");
                 }
 
-                this.WriteToTargets(LogLevel.Fatal, null, messageFunc());
+                this.WriteToTargets_noParams(LogLevel.Fatal, null, messageFunc());
             }
         }
 
@@ -1599,7 +1599,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, formatProvider, message, args); 
+                this.WriteToTargets2(LogLevel.Fatal, formatProvider, message, args); 
             }
         }
 
@@ -1611,7 +1611,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, null, message);
+                this.WriteToTargets_noParams(LogLevel.Fatal, null, message);
             }
         }
 
@@ -1625,7 +1625,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, message, args);
+                this.WriteToTargets4(LogLevel.Fatal, message, args);
             }
         }
 
@@ -1640,7 +1640,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, message, exception);
+                this.WriteToTargets3(LogLevel.Fatal, message, exception);
             }
         }
 
@@ -1653,7 +1653,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, exception, message, null);
+                this.WriteToTargets7(LogLevel.Fatal, exception, message, null);
             }
         }
 
@@ -1667,7 +1667,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, exception, message, args);
+                this.WriteToTargets7(LogLevel.Fatal, exception, message, args);
             }
         }
 
@@ -1683,7 +1683,7 @@ namespace NLog
         {
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, exception, formatProvider, message, args);
+                this.WriteToTargets8(LogLevel.Fatal, exception, formatProvider, message, args);
             }
         }
 
@@ -1699,7 +1699,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, formatProvider, message, new object[] { argument }); 
+                this.WriteToTargets2(LogLevel.Fatal, formatProvider, message, new object[] { argument }); 
             }
         }
 
@@ -1733,7 +1733,7 @@ namespace NLog
                     }
                 }
 
-                this.WriteToTargets(LogLevel.Fatal, message, new object[] { argument });
+                this.WriteToTargets4(LogLevel.Fatal, message, new object[] { argument });
             }
         }
 
@@ -1751,7 +1751,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, formatProvider, message, new object[] { argument1, argument2 }); 
+                this.WriteToTargets2(LogLevel.Fatal, formatProvider, message, new object[] { argument1, argument2 }); 
             }
         }
 
@@ -1768,7 +1768,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, message, new object[] { argument1, argument2 });
+                this.WriteToTargets4(LogLevel.Fatal, message, new object[] { argument1, argument2 });
             }
         }
 
@@ -1788,7 +1788,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
+                this.WriteToTargets2(LogLevel.Fatal, formatProvider, message, new object[] { argument1, argument2, argument3 }); 
             }
         }
 
@@ -1807,7 +1807,7 @@ namespace NLog
         { 
             if (this.IsFatalEnabled)
             {
-                this.WriteToTargets(LogLevel.Fatal, message, new object[] { argument1, argument2, argument3 });
+                this.WriteToTargets4(LogLevel.Fatal, message, new object[] { argument1, argument2, argument3 });
             }
         }
 
