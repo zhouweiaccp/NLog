@@ -536,7 +536,8 @@ namespace NLog.Config
                 DefaultCultureInfo = CultureInfo.InvariantCulture;
             }
 
-            //also check internalLogLevel early, as other properties could write (indirect) to the internal log.
+            // also check internalLogLevel early, as other properties could write (indirect) to the internal log.
+            // expanding variables not possible here, there are created later
             var attributeValue = nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name);
             var internalLogLevel = ParseLogLevelSafe("internalLogLevel", attributeValue, InternalLogger.LogLevel);
 
@@ -550,7 +551,7 @@ namespace NLog.Config
             if (filePath != null)
                 _fileMustAutoReloadLookup[GetFileLookupKey(filePath)] = autoReload;
 
-            
+
             LogFactory.KeepVariablesOnReload = nlogElement.GetOptionalBooleanAttribute("keepVariablesOnReload", LogFactory.KeepVariablesOnReload);
             InternalLogger.LogToConsole = nlogElement.GetOptionalBooleanAttribute("internalLogToConsole", InternalLogger.LogToConsole);
             InternalLogger.LogToConsoleError = nlogElement.GetOptionalBooleanAttribute("internalLogToConsoleError", InternalLogger.LogToConsoleError);
@@ -563,6 +564,7 @@ namespace NLog.Config
             InternalLogger.LogToTrace = nlogElement.GetOptionalBooleanAttribute("internalLogToTrace", InternalLogger.LogToTrace);
 #endif
             InternalLogger.IncludeTimestamp = nlogElement.GetOptionalBooleanAttribute("internalLogIncludeTimestamp", InternalLogger.IncludeTimestamp);
+            // expanding variables not possible here, there are created later
             LogFactory.GlobalThreshold = ParseLogLevelSafe("globalThreshold", nlogElement.GetOptionalAttribute("globalThreshold", LogFactory.GlobalThreshold.Name), LogFactory.GlobalThreshold);
 
             var children = nlogElement.Children.ToList();
