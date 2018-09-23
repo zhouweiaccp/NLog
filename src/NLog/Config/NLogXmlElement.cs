@@ -33,6 +33,7 @@
 
 using System.Linq;
 using System.Text;
+using NLog.Common;
 
 namespace NLog.Config
 {
@@ -156,7 +157,21 @@ namespace NLog.Config
                 return defaultValue;
             }
 
-            return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+            try
+            {
+                return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+            }
+            catch (Exception e)
+            {
+                const string message = "'{0}' hasn't a valid boolean value '{1}'. {2} will be used";
+                var configException = new NLogConfigurationException(e, message, attributeName, value, defaultValue);
+                if (configException.MustBeRethrown())
+                {
+                    throw;
+                }
+
+                return defaultValue;
+            }
         }
 
         /// <summary>
@@ -181,7 +196,21 @@ namespace NLog.Config
                 return null;
             }
 
-            return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+            try
+            {
+                return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+            }
+            catch (Exception e)
+            {
+                const string message = "'{0}' hasn't a valid boolean value '{1}'. {2} will be used";
+                var configException = new NLogConfigurationException(e, message, attributeName, value, defaultValue);
+                if (configException.MustBeRethrown())
+                {
+                    throw;
+                }
+
+                return defaultValue;
+            }
         }
 
         /// <summary>

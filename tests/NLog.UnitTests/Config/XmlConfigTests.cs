@@ -126,11 +126,11 @@ namespace NLog.UnitTests.Config
             }
         }
         [Fact]
-        public void InvalidInternalLogLevel_shouldNotBreakLogging()
+        public void InvalidNLogAttributeValues_shouldNotBreakLogging()
         {
             using (new InternalLoggerScope(true))
             {
-                var xml = @"<nlog internalLogLevel='none'>
+                var xml = @"<nlog internalLogLevel='oops' autoreload='woops' globalThreshold='noooos'>
                         <targets>
                             <target name='debug' type='Debug' layout='${message}' />
                         </targets>

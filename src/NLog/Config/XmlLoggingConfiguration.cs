@@ -533,18 +533,11 @@ namespace NLog.Config
             }
 
             //check loglevel as first, as other properties could write (indirect) to the internal log.
-            try
-            {
-                InternalLogger.LogLevel = LogLevel.FromString(nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name));
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Error(e, "InternalLogLevel isn't valid");
-                if (e.MustBeRethrown())
-                {
-                    throw;
-                }
-            }
+            var attributeValue = nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name);
+            var internalLogLevel = ParseLogLevelSafe("internalLogLevel", attributeValue, InternalLogger.LogLevel);
+
+            InternalLogger.LogLevel = internalLogLevel;
+
 #pragma warning disable 618
             ExceptionLoggingOldStyle = nlogElement.GetOptionalBooleanAttribute("exceptionLoggingOldStyle", false);
 #pragma warning restore 618
@@ -567,7 +560,7 @@ namespace NLog.Config
             InternalLogger.LogToTrace = nlogElement.GetOptionalBooleanAttribute("internalLogToTrace", InternalLogger.LogToTrace);
 #endif
             InternalLogger.IncludeTimestamp = nlogElement.GetOptionalBooleanAttribute("internalLogIncludeTimestamp", InternalLogger.IncludeTimestamp);
-            LogFactory.GlobalThreshold = LogLevelFromString(nlogElement.GetOptionalAttribute("globalThreshold", LogFactory.GlobalThreshold.Name));
+            LogFactory.GlobalThreshold = ParseLogLevelSafe("globalThreshold", nlogElement.GetOptionalAttribute("globalThreshold", LogFactory.GlobalThreshold.Name), LogFactory.GlobalThreshold);
 
             var children = nlogElement.Children.ToList();
 
@@ -621,6 +614,35 @@ namespace NLog.Config
             {
                 ParseRulesElement(ruleChild, LoggingRules);
             }
+        }
+
+        /// <summary>
+        /// Parse loglevel, but don't throw if exception throwing is disabled
+        /// </summary>
+        /// <param name="attributeName">Name of attribute for logging.</param>
+        /// <param name="attributeValue">Value of parse.</param>
+        /// <param name="default">Used if there is an exception</param>
+        /// <returns></returns>
+        private static LogLevel ParseLogLevelSafe(string attributeName, string attributeValue, LogLevel @default)
+        {
+            try
+            {
+                var internalLogLevel = LogLevel.FromString(attributeValue);
+                return internalLogLevel;
+            }
+            catch (Exception e)
+            {
+                const string message = "attribute '{0}': '{1}' isn't valid LogLevel. {2} will be used.";
+                var configException = new NLogConfigurationException(e, message, attributeName, attributeValue, @default);
+                if (configException.MustBeRethrown())
+                {
+                    throw;
+                }
+
+                return @default;
+            }
+
+
         }
 
         /// <summary>
