@@ -533,9 +533,18 @@ namespace NLog.Config
             }
 
             //check loglevel as first, as other properties could write (indirect) to the internal log.
-            //expanding variables not possible here, there are created later
-            InternalLogger.LogLevel = LogLevel.FromString(nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name));
-
+            try
+            {
+                InternalLogger.LogLevel = LogLevel.FromString(nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name));
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Error(e, "InternalLogLevel isn't valid");
+                if (e.MustBeRethrown())
+                {
+                    throw;
+                }
+            }
 #pragma warning disable 618
             ExceptionLoggingOldStyle = nlogElement.GetOptionalBooleanAttribute("exceptionLoggingOldStyle", false);
 #pragma warning restore 618
@@ -647,7 +656,7 @@ namespace NLog.Config
                 InternalLogger.Debug("The logger named '{0}' are disabled");
                 return;
             }
-            
+
             string appendTo = loggerElement.GetOptionalAttribute("appendTo", null) ?? loggerElement.GetOptionalAttribute("writeTo", null);
 
             var rule = new LoggingRule
