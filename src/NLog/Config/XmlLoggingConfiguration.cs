@@ -527,12 +527,16 @@ namespace NLog.Config
             InternalLogger.Trace("ParseNLogElement");
             nlogElement.AssertName("nlog");
 
+            // check error throwing as first
+            LogFactory.ThrowExceptions = nlogElement.GetOptionalBooleanAttribute("throwExceptions", LogFactory.ThrowExceptions);
+            LogFactory.ThrowConfigExceptions = nlogElement.GetOptionalBooleanAttribute("throwConfigExceptions", LogFactory.ThrowConfigExceptions);
+
             if (nlogElement.GetOptionalBooleanAttribute("useInvariantCulture", false))
             {
                 DefaultCultureInfo = CultureInfo.InvariantCulture;
             }
 
-            //check loglevel as first, as other properties could write (indirect) to the internal log.
+            //also check internalLogLevel early, as other properties could write (indirect) to the internal log.
             var attributeValue = nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name);
             var internalLogLevel = ParseLogLevelSafe("internalLogLevel", attributeValue, InternalLogger.LogLevel);
 
@@ -546,8 +550,7 @@ namespace NLog.Config
             if (filePath != null)
                 _fileMustAutoReloadLookup[GetFileLookupKey(filePath)] = autoReload;
 
-            LogFactory.ThrowExceptions = nlogElement.GetOptionalBooleanAttribute("throwExceptions", LogFactory.ThrowExceptions);
-            LogFactory.ThrowConfigExceptions = nlogElement.GetOptionalBooleanAttribute("throwConfigExceptions", LogFactory.ThrowConfigExceptions);
+            
             LogFactory.KeepVariablesOnReload = nlogElement.GetOptionalBooleanAttribute("keepVariablesOnReload", LogFactory.KeepVariablesOnReload);
             InternalLogger.LogToConsole = nlogElement.GetOptionalBooleanAttribute("internalLogToConsole", InternalLogger.LogToConsole);
             InternalLogger.LogToConsoleError = nlogElement.GetOptionalBooleanAttribute("internalLogToConsoleError", InternalLogger.LogToConsoleError);
