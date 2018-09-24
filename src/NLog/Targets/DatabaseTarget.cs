@@ -921,23 +921,31 @@ namespace NLog.Targets
             object value = null;
             var valueSet = false;
             var useRawValue = parameterInfo.UseRawValue == true || (parameterInfo.UseRawValue == null && !IsStringyDbType(dbType));
-            if (useRawValue && parameterInfo.Layout.TryGetRawValue(logEvent, out var rawValue))
+            InternalLogger.Trace("  DatabaseTarget: {0} for '{1}'", useRawValue ? "use RawValue" : "don't use RawValue", parameterName);
+            if (useRawValue)
             {
-                try
+                if (parameterInfo.Layout.TryGetRawValue(logEvent, out var rawValue))
                 {
-                    InternalLogger.Trace("  DatabaseTarget: got raw value for '{0}'", parameterName);
-                    value = ParameterValueConverter.ConvertFromObject(rawValue, dbType, parameterInfo);
-                    valueSet = true;
-                }
-                catch (Exception exception)
-                {
-                    exception.Data["rawValue"] = rawValue;
-                    const string errorMessage = "converting object to '{1}` failed. Try render and parse.";
-                    var rethrow = HandleException(exception, errorMessage);
-                    if (rethrow)
+                    try
                     {
-                        throw;
+                        InternalLogger.Trace("  DatabaseTarget: got raw value for '{0}'", parameterName);
+                        value = ParameterValueConverter.ConvertFromObject(rawValue, dbType, parameterInfo);
+                        valueSet = true;
                     }
+                    catch (Exception exception)
+                    {
+                        exception.Data["rawValue"] = rawValue;
+                        const string errorMessage = "converting object to '{1}` failed. Try render and parse.";
+                        var rethrow = HandleException(exception, errorMessage);
+                        if (rethrow)
+                        {
+                            throw;
+                        }
+                    }
+                }
+                else
+                {
+                    InternalLogger.Trace("  DatabaseTarget: no RawValue retrieved for '{0}'", parameterName);
                 }
             }
 
