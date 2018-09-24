@@ -31,8 +31,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-using System.Data;
-
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
 
 namespace NLog.Targets
