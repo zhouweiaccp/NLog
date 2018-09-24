@@ -416,7 +416,7 @@ namespace NLog.Targets
                         InternalLogger.Warn(ex, "DatabaseTarget(Name={0}): DbConnectionStringBuilder failed to parse '{1}' ConnectionString", Name, ConnectionStringName);
                     else
 #endif
-                    InternalLogger.Warn(ex, "DatabaseTarget(Name={0}): DbConnectionStringBuilder failed to parse ConnectionString", Name);
+                        InternalLogger.Warn(ex, "DatabaseTarget(Name={0}): DbConnectionStringBuilder failed to parse ConnectionString", Name);
                 }
             }
 
@@ -882,6 +882,8 @@ namespace NLog.Targets
             }
         }
 
+
+
         /// <summary>
         /// Get (converted) parameter value, including fallbacks
         /// </summary>
@@ -918,7 +920,8 @@ namespace NLog.Targets
 
             object value = null;
             var valueSet = false;
-            if (parameterInfo.Layout.TryGetRawValue(logEvent, out var rawValue))
+            var useRawValue = parameterInfo.UseRawValue == true || (parameterInfo.UseRawValue == null && !IsStringyDbType(dbType));
+            if (useRawValue && parameterInfo.Layout.TryGetRawValue(logEvent, out var rawValue))
             {
                 try
                 {
@@ -962,6 +965,12 @@ namespace NLog.Targets
             }
 
             return value;
+        }
+
+        private static bool IsStringyDbType(DbType dbType)
+        {
+            return dbType == DbType.AnsiString || dbType == DbType.String || dbType == DbType.AnsiStringFixedLength ||
+                   dbType == DbType.StringFixedLength;
         }
 
 #if NETSTANDARD1_0

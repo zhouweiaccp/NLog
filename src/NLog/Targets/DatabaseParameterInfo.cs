@@ -31,6 +31,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+using System.Data;
+
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
 
 namespace NLog.Targets
@@ -77,6 +79,17 @@ namespace NLog.Targets
         /// <docgen category='Parameter Options' order='1' />
         [RequiredParameter]
         public Layout Layout { get; set; }
+
+        /// <summary>
+        /// Use raw value.
+        /// If null, then use the rawValue when the dbtype isn't a string-like (that's:
+        /// <see cref="System.Data.DbType.String"/>
+        /// <see cref="System.Data.DbType.AnsiString"/>
+        /// <see cref="System.Data.DbType.StringFixedLength"/>
+        /// <see cref="System.Data.DbType.AnsiStringFixedLength"/>
+        /// )
+        /// </summary>
+        public bool? UseRawValue { get; set; }
 
         /// <summary>
         /// Gets or sets the database parameter DbType.
