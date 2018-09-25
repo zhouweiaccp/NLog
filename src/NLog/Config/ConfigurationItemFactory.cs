@@ -307,7 +307,14 @@ namespace NLog.Config
                         //only static, so first param null
                         try
                         {
-                            var firstParam = preloadMethod.GetParameters().FirstOrDefault();
+                            var parameterInfos = preloadMethod.GetParameters();
+                            if (parameterInfos.Length > 1)
+                            {
+                                InternalLogger.Warn("Invoking Preload for '{0}' stopped, too many parameters", type.FullName);
+                                return;
+                            }
+
+                            var firstParam = parameterInfos.FirstOrDefault();
                             object[] parameters = null;
                             if (firstParam?.ParameterType == typeof(ConfigurationItemFactory))
                             {
