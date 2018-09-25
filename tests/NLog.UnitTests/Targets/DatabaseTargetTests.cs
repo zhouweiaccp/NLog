@@ -472,7 +472,7 @@ Dispose()
         }
 
         [Theory]
-        [InlineData(true, false)]
+        [InlineData(true, false)] 
         [InlineData(false, true)]
         [InlineData(null, true)]  
         public void LevelParameterTest(bool? rawValue, bool expectedNumber)
@@ -558,6 +558,57 @@ Dispose()
 ";
 
             AssertLog(expectedLog);
+        }
+
+        [Theory]
+        [InlineData("${counter}", DbType.Int16, null, (short)1)]
+        [InlineData("${counter}", DbType.Int32, null, 1)]
+        [InlineData("${counter}", DbType.Boolean, null, true)]
+        [InlineData("${counter}", DbType.Int64, null, (long)1)]
+        [InlineData("${counter}", DbType.Int16, true, (short)1)]
+        [InlineData("${counter}", DbType.Int16, false, (short)1)] //fallback
+        [InlineData("${counter}", DbType.VarNumeric, null, 1)]
+        [InlineData("${counter}", DbType.AnsiString, null, "1")]
+        [InlineData("${level}", DbType.AnsiString, null, "Debug")]
+        [InlineData("${level}", DbType.Int32, null, 1)]
+        [InlineData("${level}", DbType.UInt16, null, (ushort) 1)]
+        [InlineData("${event-properties:intprop}", DbType.Int32, null, 123)]
+        [InlineData("${event-properties:intprop}", DbType.AnsiString, null, "123")]
+        [InlineData("${event-properties:intprop}", DbType.AnsiString, true, "123")]
+        [InlineData("${event-properties:intprop}", DbType.AnsiString, false, "123")]
+        [InlineData("${event-properties:intprop}", DbType.AnsiStringFixedLength, null, "123")]
+        [InlineData("${event-properties:intprop}", DbType.String, null, "123")]
+        [InlineData("${event-properties:intprop}", DbType.StringFixedLength, null, "123")]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.Int16, null, (short)124)]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.Int16, false, (short)124)]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.Int16, true, (short)124)]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.Int32, null, 124)]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.Int64, null, (long)124)]
+        [InlineData("${event-properties:almostAsIntProp}", DbType.AnsiString, null, " 124 ")]
+        public void GetParameterValueTest(string layout, DbType dbtype, bool? useRawValue, object expected)
+        {
+            // Arrange
+            var logEventInfo = new LogEventInfo(LogLevel.Debug, "logger1", "message 2");
+            logEventInfo.Properties["intprop"] = 123;
+            logEventInfo.Properties["almostAsIntProp"] = " 124 ";
+            logEventInfo.Properties["dateprop"] = new DateTime(2018, 12, 30, 13, 34, 56);
+
+            var parameterName = "@param1";
+            var databaseParameterInfo = new DatabaseParameterInfo
+            {
+                DbType = dbtype.ToString(),
+                Layout = layout,
+                Name = parameterName,
+                UseRawValue = useRawValue
+            };
+
+
+            // Act
+
+            var result = new DatabaseTarget().GetParameterValue(logEventInfo, databaseParameterInfo, parameterName, dbtype);
+
+            //Assert
+            Assert.Equal(expected, result);
         }
 
         [Fact]

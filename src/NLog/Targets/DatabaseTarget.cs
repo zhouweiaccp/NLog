@@ -892,7 +892,7 @@ namespace NLog.Targets
         /// <param name="parameterName"></param>
         /// <param name="dbType"></param>
         /// <returns></returns>
-        private object GetParameterValue(LogEventInfo logEvent, DatabaseParameterInfo parameterInfo, string parameterName, DbType dbType)
+        internal object GetParameterValue(LogEventInfo logEvent, DatabaseParameterInfo parameterInfo, string parameterName, DbType dbType)
         {
             //returns: should rethrow
             bool HandleException(Exception exception, string errorMessage)

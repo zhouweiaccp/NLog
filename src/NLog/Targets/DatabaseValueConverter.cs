@@ -34,8 +34,10 @@
 #if !SILVERLIGHT && !__IOS__ && !__ANDROID__
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using NLog.Common;
 
 namespace NLog.Targets
 {
@@ -44,6 +46,53 @@ namespace NLog.Targets
     /// </summary>
     internal class DatabaseValueConverter : IDatabaseValueConverter
     {
+
+        private static Dictionary<DbType, Type> _typeMap = new Dictionary<DbType, Type>();
+
+        /// <inheritdoc />
+        static DatabaseValueConverter()
+        {
+            //typeMap = new Dictionary<Type, DbType>());
+            AddToMapping(DbType.AnsiString, typeof(string));
+            AddToMapping(DbType.Binary, typeof(byte[]));
+            AddToMapping(DbType.Byte, typeof(byte));
+            AddToMapping(DbType.Boolean, typeof(bool));
+            AddToMapping(DbType.Currency, typeof(decimal));
+            AddToMapping(DbType.Date, typeof(DateTime));
+            AddToMapping(DbType.DateTime, typeof(DateTime));
+            AddToMapping(DbType.DateTime2, typeof(DateTime));
+            AddToMapping(DbType.DateTimeOffset, typeof(DateTimeOffset));
+            AddToMapping(DbType.Decimal, typeof(decimal));
+            AddToMapping(DbType.Double, typeof(float));
+            AddToMapping(DbType.Guid, typeof(Guid));
+            AddToMapping(DbType.Int16, typeof(short));
+            AddToMapping(DbType.Int32, typeof(int));
+            AddToMapping(DbType.Int64, typeof(long));
+            //todo DbType.Object
+            AddToMapping(DbType.SByte, typeof(sbyte));
+            AddToMapping(DbType.Single, typeof(float));
+            AddToMapping(DbType.String, typeof(string));
+            //todo AddToMapping(DbType.StringFixedLength, typeof(char));
+            AddToMapping(DbType.UInt16, typeof(ushort));
+            AddToMapping(DbType.UInt32, typeof(uint));
+            AddToMapping(DbType.UInt64, typeof(ulong));
+            //todo VarNumeric
+            //todo AnsiStringFixedLength
+            //todo StringFixedLength
+            //todo xml
+
+
+
+
+
+        }
+
+        private static void AddToMapping(DbType dbtype, Type t)
+        {
+            _typeMap.Add(dbtype, t);
+        }
+
+
         /// <inheritdoc />
         public object ConvertFromString(string value, DbType dbType, DatabaseParameterInfo parameterInfo)
         {
@@ -124,8 +173,39 @@ namespace NLog.Targets
         /// <inheritdoc />
         public object ConvertFromObject(object rawValue, DbType dbType, DatabaseParameterInfo parameterInfo)
         {
-            // todo
+            if (rawValue == null) return null;
+            
+            if (_typeMap.TryGetValue(dbType, out Type t) && CanChangeType(rawValue, t))
+            {
+                try
+                {
+                   return Convert.ChangeType(rawValue, t);
+                }
+                catch (Exception ex)
+                {
+                    InternalLogger.Debug(ex, "convert type {0} to type {1} (dbtype {2} for parameter {3} failed", rawValue.GetType(), t, dbType, parameterInfo.Name);
+                }
+            }
+
             return rawValue;
+        }
+
+
+        private static bool CanChangeType(object value, Type conversionType)
+        {
+            if (conversionType == null)
+            {
+                return false;
+            }
+
+            IConvertible convertible = value as IConvertible;
+
+            if (convertible == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -141,6 +221,8 @@ namespace NLog.Targets
             }
             return buffer;
         }
+
+
     }
 }
 #endif
