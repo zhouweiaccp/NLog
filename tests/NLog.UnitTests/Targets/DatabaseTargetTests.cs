@@ -471,8 +471,11 @@ Dispose()
             AssertLog(expectedLog);
         }
 
-        [Fact]
-        public void LevelParameterTest()
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(null, true)]  
+        public void LevelParameterTest(bool? rawValue, bool expectedNumber)
         {
             MockDbConnection.ClearLog();
             DatabaseTarget dt = new DatabaseTarget()
@@ -482,7 +485,7 @@ Dispose()
                 KeepConnection = true,
                 Parameters =
                 {
-                    new DatabaseParameterInfo("lvl", "${level:format=Ordinal}"),
+                    new DatabaseParameterInfo("lvl", "${level:format=Ordinal}") { UseRawValue = rawValue},
                     new DatabaseParameterInfo("msg", "${message}")
                 }
             };
@@ -504,11 +507,26 @@ Dispose()
                 Assert.Null(ex);
             }
 
-            string expectedLog = @"Open('Server=.;Trusted_Connection=SSPI;').
+            string valueLevel1;
+            string valueLevel2;
+
+            if (expectedNumber)
+            {
+                valueLevel1 = "2"; // the format ordinail
+                valueLevel2 = "1";
+            }
+            else
+            {
+                valueLevel1 = "Info"; //the enum value
+                valueLevel2 = "Debug";
+            }
+
+
+            string expectedLog = string.Format(@"Open('Server=.;Trusted_Connection=SSPI;').
 CreateParameter(0)
 Parameter #0 Direction=Input
 Parameter #0 Name=lvl
-Parameter #0 Value=Info
+Parameter #0 Value={0}
 Add Parameter Parameter #0
 CreateParameter(1)
 Parameter #1 Direction=Input
@@ -519,7 +537,7 @@ ExecuteNonQuery: INSERT INTO FooBar VALUES(@lvl, @msg)
 CreateParameter(0)
 Parameter #0 Direction=Input
 Parameter #0 Name=lvl
-Parameter #0 Value=Debug
+Parameter #0 Value={1}
 Add Parameter Parameter #0
 CreateParameter(1)
 Parameter #1 Direction=Input
@@ -527,7 +545,9 @@ Parameter #1 Name=msg
 Parameter #1 Value=msg3
 Add Parameter Parameter #1
 ExecuteNonQuery: INSERT INTO FooBar VALUES(@lvl, @msg)
-";
+", valueLevel1, valueLevel2);
+
+
 
             AssertLog(expectedLog);
 
@@ -1184,7 +1204,7 @@ INSERT INTO NLogSqlLiteTestAppNames(Id, Name) VALUES (1, @appName);"">
                 DatabaseTarget testTarget = new DatabaseTarget("TestSqliteTargetInstallProgram");
                 testTarget.ConnectionString = connectionString;
                 testTarget.DBProvider = dbProvider;
-                
+
                 DatabaseCommandInfo installDbCommand = new DatabaseCommandInfo
                 {
                     Text = "CREATE TABLE NLogSqlLiteTestAppNames (Id int PRIMARY KEY, Name varchar(100) NULL); " +
@@ -1398,8 +1418,8 @@ INSERT INTO NLogSqlLiteTestAppNames(Id, Name) VALUES (1, @appName);"">
 
                 var result = SqlServerTest.IssueScalarQuery(isAppVeyor, "SELECT Uid FROM dbo.NLogSqlServerTest");
 
-                Assert.Equal(uid, result); 
-                
+                Assert.Equal(uid, result);
+
                 var result2 = SqlServerTest.IssueScalarQuery(isAppVeyor, "SELECT LogDate FROM dbo.NLogSqlServerTest");
 
                 Assert.Equal(DateTime.Today, result2);
