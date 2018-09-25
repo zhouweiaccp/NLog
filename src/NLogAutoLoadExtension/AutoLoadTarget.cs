@@ -32,6 +32,7 @@
 // 
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using NLog;
 using NLog.Config;
@@ -123,10 +124,24 @@ namespace LoaderTestWrong1
 {
     public class NLogPackageLoader
     {
+        [DebuggerStepThrough, DebuggerHidden, DebuggerNonUserCode] //don't let VS2017 stop here when debugging an unit test
         public static void Preload()
         {
-            throw new Exception("ow noos");
+            throw new NLogPackageLoaderException("ow noos");
         }
+
+
+    }
+
+    [DebuggerNonUserCode]
+    public class NLogPackageLoaderException : Exception
+    {
+        /// <inheritdoc />
+        public NLogPackageLoaderException(string message) : base(message)
+        {
+
+        }
+
     }
 
 }

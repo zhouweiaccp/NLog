@@ -31,6 +31,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NLog.Common;
